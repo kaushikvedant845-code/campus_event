@@ -8,4 +8,48 @@ body {
   font-family: Arial, sans-serif;
   background: #ffffff;
   color: #111111;
+
+  /* ================================
+   DASHBOARD — CUSTOMIZE ACTION
+   ================================ */
+
+.dashboard-page a.dashboard-customize-link {
+  display: inline-flex !important;
+  align-items: center !important;
+
+  margin: 0 !important;
+  padding: 4px 0 !important;
+
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+
+  color: #284d82 !important;
+
+  text-decoration: none !important;
+
+  cursor: pointer !important;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.dashboard-page .dashboard-customize-wrapper {
+  display: flex !important;
+  justify-content: flex-start !important;
+
+  margin-top: 8px !important;
+  margin-bottom: 34px !important;
+}
+
+.dashboard-page a.dashboard-customize-link:hover {
+  color: #162f55 !important;
+  text-decoration: underline !important;
+  transform: translateX(2px);
+}
+
+.dashboard-page a.dashboard-customize-link:active {
+  transform: translateX(1px);
+}
 }
