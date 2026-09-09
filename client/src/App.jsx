@@ -28,6 +28,11 @@ import Navbar from "./components/Navbar"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AttendanceScanner from "./components/AttendanceScanner"
 
+// Faculty module
+import FacultyLogin from "./pages/faculty_module/FacultyLogin"
+import FacultyMfaSetup from "./pages/faculty_module/FacultyMfaSetup"
+import FacultyDashboard from "./pages/faculty_module/FacultyDashboard"
+import FacultyRoute from "./components/FacultyRoute"
 
 function App() {
   return (
@@ -181,7 +186,33 @@ function App() {
             </ProtectedRoute>
           }
         />
+           {/* =====================================================
+    FACULTY AUTHENTICATION
+    ===================================================== */}
 
+<Route
+  path="/faculty-login"
+  element={<FacultyLogin />}
+/>
+
+<Route
+  path="/faculty-mfa-setup"
+  element={<FacultyMfaSetup />}
+/>
+
+
+{/* =====================================================
+    FACULTY DASHBOARD
+    ===================================================== */}
+
+<Route
+  path="/faculty"
+  element={
+    <FacultyRoute>
+      <FacultyDashboard />
+    </FacultyRoute>
+  }
+/>
 
         {/* =====================================================
             404

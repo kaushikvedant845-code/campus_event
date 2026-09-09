@@ -1,0 +1,196 @@
+/* Faculty authentication */
+
+.faculty-auth-page {
+  min-height: calc(100vh - 80px);
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+  background: #f5f7fb;
+}
+
+.faculty-auth-card {
+  width: min(520px, 100%);
+  padding: 42px;
+  border: 1px solid #dfe5ef;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 18px 55px rgba(20, 38, 70, 0.08);
+}
+
+.faculty-auth-kicker {
+  margin: 0 0 12px;
+  color: #6d83a4;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.faculty-auth-card h1 {
+  margin: 0;
+  color: #14294b;
+  font-size: clamp(32px, 5vw, 46px);
+  line-height: 1.05;
+}
+
+.faculty-auth-muted {
+  margin: 14px 0 28px;
+  color: #71809a;
+  line-height: 1.65;
+}
+
+.faculty-google-button,
+.faculty-primary-button,
+.faculty-secondary-button {
+  width: 100%;
+  min-height: 54px;
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.faculty-google-button {
+  display: grid;
+  grid-template-columns: 34px 1fr 20px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  color: #17345d;
+  background: #fff;
+  border: 1px solid #d7dfeb;
+  text-align: left;
+}
+
+.faculty-google-mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dce4ef;
+  border-radius: 9px;
+  color: #4285f4;
+  font-weight: 900;
+}
+
+.faculty-auth-message {
+  margin: 18px 0;
+  padding: 13px 15px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.faculty-auth-error {
+  color: #7a2630;
+  background: #fff3f3;
+  border: 1px solid #f1d5d8;
+}
+
+.faculty-auth-card form {
+  display: grid;
+  gap: 10px;
+}
+
+.faculty-auth-card label {
+  color: #263b5d;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.faculty-mfa-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 60px;
+  padding: 0 18px;
+  border: 1px solid #ccd6e5;
+  border-radius: 14px;
+  color: #14294b;
+  background: #fff;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.35em;
+  text-align: center;
+  outline: none;
+}
+
+.faculty-primary-button {
+  margin-top: 10px;
+  border: 0;
+  color: #fff;
+  background: #183866;
+}
+
+.faculty-secondary-button {
+  margin-top: 12px;
+  border: 1px solid #d7dfeb;
+  color: #31496d;
+  background: #fff;
+}
+
+.faculty-google-button:disabled,
+.faculty-primary-button:disabled,
+.faculty-secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.faculty-auth-spinner {
+  width: 30px;
+  height: 30px;
+  margin: 26px auto 0;
+  border: 3px solid #dbe3ef;
+  border-top-color: #183866;
+  border-radius: 50%;
+  animation: faculty-spin 0.8s linear infinite;
+}
+
+@keyframes faculty-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .faculty-auth-card {
+    padding: 30px 22px;
+    border-radius: 20px;
+  }
+}
+
+
+.faculty-qr-wrapper {
+  display: grid;
+  place-items: center;
+  margin: 24px 0;
+  padding: 18px;
+  border: 1px solid #dfe5ef;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.faculty-qr-wrapper img {
+  width: min(260px, 100%);
+  height: auto;
+}
+
+.faculty-secret-details {
+  margin: 0 0 22px;
+  color: #536987;
+  font-size: 13px;
+}
+
+.faculty-secret-details summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.faculty-secret-details code {
+  display: block;
+  margin-top: 10px;
+  padding: 12px;
+  overflow-wrap: anywhere;
+  border-radius: 10px;
+  background: #f2f5f9;
+  color: #243b5f;
+  font-size: 12px;
+}
