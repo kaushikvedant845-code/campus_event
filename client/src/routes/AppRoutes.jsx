@@ -1,73 +1,69 @@
 import { Routes, Route } from "react-router-dom"
 
-// =====================================================
-// PUBLIC PAGES
-// =====================================================
+// =========================================================
+// PUBLIC
+// =========================================================
 
 import Home from "../pages/common/Home"
 import Events from "../pages/common/Events"
 import EventDetails from "../pages/common/EventDetails"
 import NotFound from "../pages/common/NotFound"
 
-// =====================================================
+// =========================================================
 // AUTH
-// =====================================================
+// =========================================================
 
 import Login from "../pages/auth/Login"
 import Signup from "../pages/auth/Signup"
 
-// =====================================================
+// =========================================================
 // STUDENT
-// =====================================================
+// =========================================================
 
 import StudentDashboard from "../pages/student/StudentDashboard"
 import Profile from "../pages/student/Profile"
-
 import EventRegistration from "../pages/student/EventRegistration"
 import RegistrationReview from "../pages/student/RegistrationReview"
 import RegistrationSuccess from "../pages/student/RegistrationSuccess"
 
-// =====================================================
-// CLUB HEAD
-// =====================================================
-
-import ClubHeadDashboard from "../pages/club_head/ClubHeadDashboard"
-
-// =====================================================
+// =========================================================
 // SETTINGS
-// =====================================================
+// =========================================================
 
 import Settings from "../pages/settings/Settings"
 import CustomizeProfile from "../pages/settings/CustomizeProfile"
 import DashboardPreferences from "../pages/settings/DashboardPreferences"
 import AccountSettings from "../pages/settings/AccountSettings"
 
-// =====================================================
-// COMPONENTS / PROTECTION
-// =====================================================
-
-import ProtectedRoute from "../components/ProtectedRoute"
-import AttendanceScanner from "../components/AttendanceScanner"
-
-// =====================================================
+// =========================================================
 // FACULTY
-// =====================================================
+// =========================================================
 
-// Faculty module
 import FacultyLogin from "../pages/faculty/FacultyLogin"
 import FacultyMfaSetup from "../pages/faculty/FacultyMfaSetup"
 import FacultyDashboard from "../pages/faculty/FacultyDashboard"
-import FacultyRoute from "../components/FacultyRoute"
 
+// =========================================================
+// CLUB HEAD
+// =========================================================
 
+import ClubHeadDashboard from "../pages/club_head/ClubHeadDashboard"
 
-export default function AppRoutes() {
+// =========================================================
+// COMPONENTS
+// =========================================================
+
+import ProtectedRoute from "../components/ProtectedRoute"
+import RoleRoute from "../components/RoleRoute"
+import AttendanceScanner from "../components/AttendanceScanner"
+
+function AppRoutes() {
   return (
     <Routes>
 
       {/* =====================================================
           PUBLIC ROUTES
-          ===================================================== */}
+      ===================================================== */}
 
       <Route
         path="/"
@@ -84,6 +80,10 @@ export default function AppRoutes() {
         element={<EventDetails />}
       />
 
+      {/* =====================================================
+          STUDENT AUTH
+      ===================================================== */}
+
       <Route
         path="/login"
         element={<Login />}
@@ -94,139 +94,72 @@ export default function AppRoutes() {
         element={<Signup />}
       />
 
+      {/* =====================================================
+          AUTHENTICATED USER
+      ===================================================== */}
+
+      <Route element={<ProtectedRouteWrapper />}>
+
+        {/* Student dashboard */}
+        <Route
+          path="/dashboard"
+          element={<StudentDashboard />}
+        />
+
+        {/* Profile */}
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
+
+        {/* Settings */}
+        <Route
+          path="/settings"
+          element={<Settings />}
+        />
+
+        <Route
+          path="/settings/profile"
+          element={<CustomizeProfile />}
+        />
+
+        <Route
+          path="/settings/dashboard"
+          element={<DashboardPreferences />}
+        />
+
+        <Route
+          path="/settings/account"
+          element={<AccountSettings />}
+        />
+
+        {/* Registration */}
+        <Route
+          path="/events/:id/register"
+          element={<EventRegistration />}
+        />
+
+        <Route
+          path="/events/:id/review"
+          element={<RegistrationReview />}
+        />
+
+        <Route
+          path="/registration-success"
+          element={<RegistrationSuccess />}
+        />
+
+        {/* Attendance */}
+        <Route
+          path="/attendance/check-in"
+          element={<AttendanceScanner />}
+        />
+
+      </Route>
 
       {/* =====================================================
-          STUDENT DASHBOARD
-          ===================================================== */}
-
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <StudentDashboard />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* =====================================================
-          STUDENT PROFILE
-          ===================================================== */}
-
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* =====================================================
-          SETTINGS
-          ===================================================== */}
-
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/settings/profile"
-        element={
-          <ProtectedRoute>
-            <CustomizeProfile />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/settings/dashboard"
-        element={
-          <ProtectedRoute>
-            <DashboardPreferences />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/settings/account"
-        element={
-          <ProtectedRoute>
-            <AccountSettings />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* =====================================================
-          EVENT REGISTRATION
-          ===================================================== */}
-
-      <Route
-        path="/events/:id/register"
-        element={
-          <ProtectedRoute>
-            <EventRegistration />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/events/:id/review"
-        element={
-          <ProtectedRoute>
-            <RegistrationReview />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/registration-success"
-        element={
-          <ProtectedRoute>
-            <RegistrationSuccess />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* =====================================================
-          ATTENDANCE
-          ===================================================== */}
-
-      <Route
-        path="/attendance/check-in"
-        element={
-          <ProtectedRoute>
-            <AttendanceScanner />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* =====================================================
-          CLUB HEAD
-          ===================================================== */}
-
-      <Route
-        path="/club-head"
-        element={
-          <ProtectedRoute>
-            <ClubHeadDashboard />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* =====================================================
-          FACULTY AUTHENTICATION
-          ===================================================== */}
+          FACULTY AUTH
+      ===================================================== */}
 
       <Route
         path="/faculty-login"
@@ -235,27 +168,53 @@ export default function AppRoutes() {
 
       <Route
         path="/faculty-mfa-setup"
-        element={<FacultyMfaSetup />}
-      />
-
-
-      {/* =====================================================
-          FACULTY DASHBOARD
-          ===================================================== */}
-
-      <Route
-        path="/faculty"
         element={
-          <FacultyRoute>
-            <FacultyDashboard />
-          </FacultyRoute>
+          <ProtectedRoute>
+            <FacultyMfaSetup />
+          </ProtectedRoute>
         }
       />
 
+      {/* =====================================================
+          FACULTY
+      ===================================================== */}
+
+      <Route
+        element={
+          <RoleRoute
+            allowedRoles={["faculty"]}
+          />
+        }
+      >
+        <Route
+          path="/faculty"
+          element={<FacultyDashboard />}
+        />
+      </Route>
+
+      {/* =====================================================
+          CLUB HEAD
+      ===================================================== */}
+
+      <Route
+        element={
+          <RoleRoute
+            allowedRoles={[
+              "student",
+              "club_head",
+            ]}
+          />
+        }
+      >
+        <Route
+          path="/club-head"
+          element={<ClubHeadDashboard />}
+        />
+      </Route>
 
       {/* =====================================================
           404
-          ===================================================== */}
+      ===================================================== */}
 
       <Route
         path="*"
@@ -265,3 +224,31 @@ export default function AppRoutes() {
     </Routes>
   )
 }
+
+/*
+ * =========================================================
+ * AUTHENTICATED ROUTE WRAPPER
+ * =========================================================
+ *
+ * We keep ProtectedRoute responsible only for
+ * authentication.
+ *
+ * RoleRoute is responsible for authorization.
+ *
+ * This separation makes future roles easier to add.
+ * =========================================================
+ */
+
+function ProtectedRouteWrapper() {
+  return (
+    <ProtectedRoute>
+      <RoutesOutlet />
+    </ProtectedRoute>
+  )
+}
+
+function RoutesOutlet() {
+  return <></>
+}
+
+export default AppRoutes

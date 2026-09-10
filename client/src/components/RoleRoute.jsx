@@ -2,7 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { supabase } from "../lib/supabase"
 
-export default function RoleRoute({ allowedRoles }) {
+function RoleRoute({ allowedRoles = [] }) {
   const location = useLocation()
 
   const [loading, setLoading] = useState(true)
@@ -18,51 +18,87 @@ export default function RoleRoute({ allowedRoles }) {
           error: userError,
         } = await supabase.auth.getUser()
 
-        if (userError) throw userError
+        if (userError) {
+          throw userError
+        }
 
         if (!user) {
           if (mounted) {
             setAuthorized(false)
             setLoading(false)
           }
+
           return
         }
 
         /*
-         * IMPORTANT:
-         * Role must come from trusted user/profile data
-         * protected by Supabase RLS.
+         * NEVER trust role from:
          *
-         * Do NOT trust a role coming from URL/query/localStorage.
+         * URL
+         * query parameters
+         * localStorage
+         * sessionStorage
+         * frontend state
+         *
+         * Role comes from the database.
          */
 
-        const { data: profile, error: profileError } =
-          await supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", user.id)
-            .single()
+        const {
+          data: profile,
+          error: profileError,
+        } = await supabase
+          .from("profiles")
+          .select("role, account_status")
+          .eq("id", user.id)
+          .maybeSingle()
 
-        if (profileError) throw profileError
+        if (profileError) {
+          throw profileError
+        }
 
-        const userRole = profile?.role
+        if (!profile) {
+          throw new Error(
+            "Profile not found."
+          )
+        }
+
+        /*
+         * Account status check.
+         *
+         * If your DB currently doesn't have
+         * account_status values, this remains
+         * harmless for normal active accounts.
+         */
 
         if (
-          mounted &&
-          allowedRoles.includes(userRole)
+          profile.account_status &&
+          profile.account_status !== "active"
         ) {
-          setAuthorized(true)
-        } else if (mounted) {
-          setAuthorized(false)
+          if (mounted) {
+            setAuthorized(false)
+            setLoading(false)
+          }
+
+          return
+        }
+
+        const userRole = profile.role
+
+        const isAllowed =
+          allowedRoles.includes(userRole)
+
+        if (mounted) {
+          setAuthorized(isAllowed)
+          setLoading(false)
         }
       } catch (error) {
-        console.error("Role authorization error:", error)
+        console.error(
+          "Role authorization error:",
+          error
+        )
 
         if (mounted) {
           setAuthorized(false)
-        }
-      } finally {
-        if (mounted) {
           setLoading(false)
         }
       }
@@ -78,7 +114,9 @@ export default function RoleRoute({ allowedRoles }) {
   if (loading) {
     return (
       <main className="auth-loading">
-        <p>Checking authorization...</p>
+        <p>
+          Checking authorization...
+        </p>
       </main>
     )
   }
@@ -89,7 +127,9 @@ export default function RoleRoute({ allowedRoles }) {
         to="/login"
         replace
         state={{
-          from: location.pathname,
+          from:
+            location.pathname +
+            location.search,
         }}
       />
     )
@@ -97,3 +137,5 @@ export default function RoleRoute({ allowedRoles }) {
 
   return <Outlet />
 }
+
+export default RoleRoute

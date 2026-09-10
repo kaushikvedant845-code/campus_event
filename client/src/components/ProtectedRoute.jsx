@@ -9,36 +9,73 @@ function ProtectedRoute({ children }) {
   const [session, setSession] = useState(null)
 
   useEffect(() => {
-    const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+    let mounted = true
 
-      setSession(session)
-      setLoading(false)
+    const loadSession = async () => {
+      try {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession()
+
+        if (error) {
+          throw error
+        }
+
+        if (mounted) {
+          setSession(session)
+          setLoading(false)
+        }
+      } catch (error) {
+        console.error(
+          "Authentication session error:",
+          error
+        )
+
+        if (mounted) {
+          setSession(null)
+          setLoading(false)
+        }
+      }
     }
 
-    checkSession()
+    loadSession()
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
+    } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!mounted) return
 
-    return () => subscription.unsubscribe()
+        setSession(session)
+        setLoading(false)
+      }
+    )
+
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   if (loading) {
-    return <p>Checking authentication...</p>
+    return (
+      <main className="auth-loading">
+        <p>Checking authentication...</p>
+      </main>
+    )
   }
 
   if (!session) {
     return (
       <Navigate
         to="/login"
-        state={{ from: location.pathname }}
         replace
+        state={{
+          from:
+            location.pathname +
+            location.search,
+        }}
       />
     )
   }
