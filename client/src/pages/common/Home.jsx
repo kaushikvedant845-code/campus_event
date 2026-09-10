@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
-import { supabase } from "../lib/supabase"
+import { supabase } from "../../lib/supabase"
 
 const getTitle = (event) =>
   event?.title || event?.name || event?.event_name || "Campus Event"

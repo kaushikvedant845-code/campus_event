@@ -5,7 +5,7 @@ import {
   useParams,
 } from "react-router-dom"
 
-import { supabase } from "../lib/supabase"
+import { supabase } from "../../lib/supabase"
 
 const events = {
   1: {

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
-import { supabase } from "../lib/supabase"
+import { supabase } from "../../lib/supabase"
 
 function Login() {
   const location = useLocation()

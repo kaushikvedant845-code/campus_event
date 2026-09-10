@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { supabase } from "../lib/supabase"
+// pages/faculty/FacultyDashboard.jsx
+import { supabase } from "../../lib/supabase"
 
 function StudentDashboard({ profile: dashboardProfile = null }) {
   const [loading, setLoading] = useState(true)
