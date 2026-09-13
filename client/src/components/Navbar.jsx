@@ -11,8 +11,27 @@ function Navbar() {
   const [avatarUrl, setAvatarUrl] = useState("")
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const loadProfile = async (authUser) => {
-    if (!authUser) return
+  // ---------------------------------------------------------
+  // PLATFORM IDENTITY
+  // ---------------------------------------------------------
+  // "student"  = normal student platform
+  // "faculty"  = faculty platform
+  // "unknown"  = authenticated but not yet identified
+  // ---------------------------------------------------------
+
+  const [platform, setPlatform] = useState("unknown")
+
+  // ---------------------------------------------------------
+  // LOAD USER + PLATFORM IDENTITY
+  // ---------------------------------------------------------
+
+  const loadUserIdentity = async (authUser) => {
+    if (!authUser) {
+      setUser(null)
+      setAvatarUrl("")
+      setPlatform("unknown")
+      return
+    }
 
     const fallbackUser = {
       id: authUser.id,
@@ -25,42 +44,110 @@ function Navbar() {
     }
 
     try {
-      /*
-       * Identity now comes from profiles.
-       * Do NOT use the old students table here.
-       */
-      const { data: profile, error } = await supabase
+      // -----------------------------------------------------
+      // COMMON PROFILE
+      // -----------------------------------------------------
+
+      const {
+        data: profile,
+        error: profileError,
+      } = await supabase
         .from("profiles")
-        .select("id, email, full_name, avatar_url")
+        .select(
+          "id, email, full_name, avatar_url"
+        )
         .eq("id", authUser.id)
         .maybeSingle()
 
-      if (error) {
-        console.error("Navbar profile error:", error)
+      if (profileError) {
+        console.error(
+          "Navbar profile error:",
+          profileError
+        )
       }
+
+      // -----------------------------------------------------
+      // FACULTY AUTHORIZATION
+      // -----------------------------------------------------
+      // IMPORTANT:
+      // Do NOT use profiles.role to identify faculty.
+      //
+      // Faculty identity is determined by the trusted
+      // faculty authorization function.
+      // -----------------------------------------------------
+
+      let isFaculty = false
+
+      const {
+        data: authorizedFaculty,
+        error: facultyError,
+      } = await supabase.rpc(
+        "is_authorized_faculty"
+      )
+
+      if (facultyError) {
+        console.error(
+          "Navbar faculty authorization check failed:",
+          facultyError
+        )
+      } else {
+        isFaculty = authorizedFaculty === true
+      }
+
+      // -----------------------------------------------------
+      // FINAL USER
+      // -----------------------------------------------------
 
       const updatedUser = {
         ...fallbackUser,
+
         name:
           profile?.full_name ||
           fallbackUser.name,
+
         email:
           profile?.email ||
           fallbackUser.email,
       }
 
       setUser(updatedUser)
-      setAvatarUrl(profile?.avatar_url || "")
+      setAvatarUrl(
+        profile?.avatar_url || ""
+      )
+
+      // -----------------------------------------------------
+      // PLATFORM
+      // -----------------------------------------------------
+
+      setPlatform(
+        isFaculty
+          ? "faculty"
+          : "student"
+      )
+
+      // -----------------------------------------------------
+      // CACHE ONLY FOR UI
+      // -----------------------------------------------------
+      // This cache is NEVER used for authorization.
+      // Supabase session + DB authorization remain
+      // the source of truth.
+      // -----------------------------------------------------
 
       localStorage.setItem(
         "studentUser",
         JSON.stringify(updatedUser)
       )
     } catch (error) {
-      console.error("Navbar loading error:", error)
+      console.error(
+        "Navbar loading error:",
+        error
+      )
 
       setUser(fallbackUser)
       setAvatarUrl("")
+
+      // If identity check fails, do NOT assume faculty.
+      setPlatform("student")
 
       localStorage.setItem(
         "studentUser",
@@ -68,6 +155,10 @@ function Navbar() {
       )
     }
   }
+
+  // ---------------------------------------------------------
+  // INITIAL SESSION + AUTH STATE
+  // ---------------------------------------------------------
 
   useEffect(() => {
     let mounted = true
@@ -80,22 +171,20 @@ function Navbar() {
       if (!mounted) return
 
       if (session?.user) {
-        await loadProfile(session.user)
+        await loadUserIdentity(session.user)
       } else {
-        /*
-         * Keep the cached identity only as a temporary UI fallback.
-         * Authentication is still controlled by Supabase.
-         */
-        const storedUser =
-          localStorage.getItem("studentUser")
+        setUser(null)
+        setAvatarUrl("")
+        setPlatform("unknown")
 
-        if (storedUser) {
-          try {
-            setUser(JSON.parse(storedUser))
-          } catch {
-            localStorage.removeItem("studentUser")
-          }
-        }
+        // ---------------------------------------------------
+        // No authenticated session:
+        // cached identity is not trusted.
+        // ---------------------------------------------------
+
+        localStorage.removeItem(
+          "studentUser"
+        )
       }
     }
 
@@ -108,13 +197,20 @@ function Navbar() {
         if (!mounted) return
 
         if (session?.user) {
-          await loadProfile(session.user)
-        } else if (event === "SIGNED_OUT") {
+          await loadUserIdentity(
+            session.user
+          )
+        } else if (
+          event === "SIGNED_OUT"
+        ) {
           setUser(null)
           setAvatarUrl("")
+          setPlatform("unknown")
           setMenuOpen(false)
 
-          localStorage.removeItem("studentUser")
+          localStorage.removeItem(
+            "studentUser"
+          )
         }
       }
     )
@@ -125,12 +221,17 @@ function Navbar() {
     }
   }, [])
 
-  // Close menu when user clicks outside
+  // ---------------------------------------------------------
+  // CLOSE MENU OUTSIDE CLICK
+  // ---------------------------------------------------------
+
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (
         menuRef.current &&
-        !menuRef.current.contains(event.target)
+        !menuRef.current.contains(
+          event.target
+        )
       ) {
         setMenuOpen(false)
       }
@@ -149,49 +250,88 @@ function Navbar() {
     }
   }, [])
 
-  // Close menu whenever page changes
+  // ---------------------------------------------------------
+  // CLOSE MENU ON PAGE CHANGE
+  // ---------------------------------------------------------
+
   useEffect(() => {
     setMenuOpen(false)
   }, [location.pathname])
 
+  // ---------------------------------------------------------
+  // LOGOUT
+  // ---------------------------------------------------------
+
   const handleLogout = async () => {
     setMenuOpen(false)
 
-    const { error } = await supabase.auth.signOut()
+    const { error } =
+      await supabase.auth.signOut()
 
     if (error) {
-      console.error("Logout error:", error)
+      console.error(
+        "Logout error:",
+        error
+      )
       return
     }
 
-    localStorage.removeItem("studentUser")
+    localStorage.removeItem(
+      "studentUser"
+    )
 
     setUser(null)
     setAvatarUrl("")
+    setPlatform("unknown")
 
-    navigate("/login", { replace: true })
+    navigate("/login", {
+      replace: true,
+    })
   }
+
+  // ---------------------------------------------------------
+  // RENDER
+  // ---------------------------------------------------------
 
   return (
     <nav className="main-navbar">
 
-      {/* BRAND */}
+      {/* ===================================================
+          BRAND
+      =================================================== */}
+
       <div className="navbar-brand">
-        <Link to="/" className="navbar-logo">
+        <Link
+          to="/"
+          className="navbar-logo"
+        >
           Campus Event
         </Link>
       </div>
 
-      {/* NAVIGATION */}
+      {/* ===================================================
+          NAVIGATION
+      =================================================== */}
+
       <div className="navbar-navigation">
 
-        <Link to="/" className="navbar-link">
+        <Link
+          to="/"
+          className="navbar-link"
+        >
           Home
         </Link>
 
-        <Link to="/events" className="navbar-link">
+        <Link
+          to="/events"
+          className="navbar-link"
+        >
           Events
         </Link>
+
+        {/* =================================================
+            AUTHENTICATED USER
+        ================================================= */}
 
         {user ? (
           <div
@@ -199,12 +339,17 @@ function Navbar() {
             ref={menuRef}
           >
 
-            {/* PIP BUTTON */}
+            {/* ------------------------------------------------
+                PROFILE BUTTON
+            ------------------------------------------------ */}
+
             <button
               type="button"
               className="profile-avatar-button"
               onClick={() =>
-                setMenuOpen((prev) => !prev)
+                setMenuOpen(
+                  (prev) => !prev
+                )
               }
               aria-label="Open profile menu"
               aria-expanded={menuOpen}
@@ -224,12 +369,17 @@ function Navbar() {
               )}
             </button>
 
-            {/* DROPDOWN */}
+            {/* ------------------------------------------------
+                DROPDOWN
+            ------------------------------------------------ */}
+
             {menuOpen && (
               <div className="profile-dropdown">
 
                 {/* USER INFO */}
+
                 <div className="profile-dropdown-header">
+
                   <div className="dropdown-avatar">
                     {avatarUrl ? (
                       <img
@@ -246,52 +396,108 @@ function Navbar() {
                   </div>
 
                   <div className="dropdown-user-info">
-                    <strong>{user.name}</strong>
-                    <span>{user.email}</span>
+
+                    <strong>
+                      {user.name}
+                    </strong>
+
+                    <span>
+                      {user.email}
+                    </span>
+
                   </div>
+
                 </div>
 
                 <div className="dropdown-divider" />
 
-                {/* PROFILE */}
-                <Link
-                  to="/profile"
-                  className="dropdown-item"
-                >
-                  <span>Profile</span>
-                </Link>
+                {/* =================================================
+                    FACULTY MENU
+                ================================================= */}
 
-                {/* DASHBOARD */}
-                <Link
-                  to="/dashboard"
-                  className="dropdown-item"
-                >
-                  <span>Dashboard</span>
-                </Link>
+                {platform === "faculty" ? (
+                  <>
+                    <Link
+                      to="/faculty"
+                      className="dropdown-item"
+                    >
+                      <span>
+                        Faculty Dashboard
+                      </span>
+                    </Link>
 
-                {/* SETTINGS */}
-                <Link
-                  to="/settings"
-                  className="dropdown-item"
-                >
-                  <span>Settings</span>
-                </Link>
+                    <div className="dropdown-divider" />
 
-                <div className="dropdown-divider" />
+                    <button
+                      type="button"
+                      className="dropdown-item logout-item"
+                      onClick={
+                        handleLogout
+                      }
+                    >
+                      <span>
+                        Logout
+                      </span>
+                    </button>
+                  </>
+                ) : (
+                  /* =================================================
+                     STUDENT / CLUB HEAD MENU
+                  ================================================= */
 
-                {/* LOGOUT */}
-                <button
-                  type="button"
-                  className="dropdown-item logout-item"
-                  onClick={handleLogout}
-                >
-                  <span>Logout</span>
-                </button>
+                  <>
+                    <Link
+                      to="/profile"
+                      className="dropdown-item"
+                    >
+                      <span>
+                        Profile
+                      </span>
+                    </Link>
+
+                    <Link
+                      to="/dashboard"
+                      className="dropdown-item"
+                    >
+                      <span>
+                        Dashboard
+                      </span>
+                    </Link>
+
+                    <Link
+                      to="/settings"
+                      className="dropdown-item"
+                    >
+                      <span>
+                        Settings
+                      </span>
+                    </Link>
+
+                    <div className="dropdown-divider" />
+
+                    <button
+                      type="button"
+                      className="dropdown-item logout-item"
+                      onClick={
+                        handleLogout
+                      }
+                    >
+                      <span>
+                        Logout
+                      </span>
+                    </button>
+                  </>
+                )}
 
               </div>
             )}
+
           </div>
         ) : (
+          /* =================================================
+             NOT AUTHENTICATED
+          ================================================= */
+
           <Link
             to="/login"
             className="navbar-link"

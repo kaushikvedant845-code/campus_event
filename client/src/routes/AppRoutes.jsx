@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Outlet } from "react-router-dom"
 
 // =========================================================
 // PUBLIC
@@ -20,7 +20,7 @@ import Signup from "../pages/auth/Signup"
 // STUDENT
 // =========================================================
 
-import StudentDashboard from "../pages/student/StudentDashboard"
+import DashboardRouter from "../pages/DashboardRouter"
 import Profile from "../pages/student/Profile"
 import EventRegistration from "../pages/student/EventRegistration"
 import RegistrationReview from "../pages/student/RegistrationReview"
@@ -54,8 +54,12 @@ import ClubHeadDashboard from "../pages/club_head/ClubHeadDashboard"
 // =========================================================
 
 import ProtectedRoute from "../components/ProtectedRoute"
-import RoleRoute from "../components/RoleRoute"
+import FacultyRoute from "../components/FacultyRoute"
 import AttendanceScanner from "../components/AttendanceScanner"
+
+// =========================================================
+// APP ROUTES
+// =========================================================
 
 function AppRoutes() {
   return (
@@ -95,24 +99,40 @@ function AppRoutes() {
       />
 
       {/* =====================================================
-          AUTHENTICATED USER
+          AUTHENTICATED USER ROUTES
+          
+          ProtectedRoute:
+          - checks Supabase session
+          - redirects unauthenticated users to /login
       ===================================================== */}
 
       <Route element={<ProtectedRouteWrapper />}>
 
-        {/* Student dashboard */}
+        {/* ---------------------------------------------------
+            DASHBOARD
+            DashboardRouter decides:
+            - Normal Student
+            - Club Head
+        --------------------------------------------------- */}
+
         <Route
           path="/dashboard"
-          element={<StudentDashboard />}
+          element={<DashboardRouter />}
         />
 
-        {/* Profile */}
+        {/* ---------------------------------------------------
+            STUDENT PROFILE
+        --------------------------------------------------- */}
+
         <Route
           path="/profile"
           element={<Profile />}
         />
 
-        {/* Settings */}
+        {/* ---------------------------------------------------
+            SETTINGS
+        --------------------------------------------------- */}
+
         <Route
           path="/settings"
           element={<Settings />}
@@ -133,7 +153,10 @@ function AppRoutes() {
           element={<AccountSettings />}
         />
 
-        {/* Registration */}
+        {/* ---------------------------------------------------
+            EVENT REGISTRATION
+        --------------------------------------------------- */}
+
         <Route
           path="/events/:id/register"
           element={<EventRegistration />}
@@ -149,7 +172,10 @@ function AppRoutes() {
           element={<RegistrationSuccess />}
         />
 
-        {/* Attendance */}
+        {/* ---------------------------------------------------
+            ATTENDANCE
+        --------------------------------------------------- */}
+
         <Route
           path="/attendance/check-in"
           element={<AttendanceScanner />}
@@ -176,41 +202,43 @@ function AppRoutes() {
       />
 
       {/* =====================================================
-          FACULTY
+          FACULTY PLATFORM
+          
+          FacultyRoute checks:
+          1. Supabase session
+          2. Authorized faculty
+          3. AAL2 / TOTP MFA
+          
+          Only after all three checks does the dashboard render.
       ===================================================== */}
 
       <Route
+        path="/faculty"
         element={
-          <RoleRoute
-            allowedRoles={["faculty"]}
-          />
+          <FacultyRoute>
+            <FacultyDashboard />
+          </FacultyRoute>
         }
-      >
-        <Route
-          path="/faculty"
-          element={<FacultyDashboard />}
-        />
-      </Route>
+      />
 
       {/* =====================================================
-          CLUB HEAD
+          CLUB HEAD PLATFORM
+          
+          Club Head authorization is handled separately by
+          DashboardRouter for /dashboard.
+
+          The dedicated /club-head route is intentionally
+          protected by the same membership-based logic later.
       ===================================================== */}
 
       <Route
+        path="/club-head"
         element={
-          <RoleRoute
-            allowedRoles={[
-              "student",
-              "club_head",
-            ]}
-          />
+          <ProtectedRoute>
+            <ClubHeadDashboard />
+          </ProtectedRoute>
         }
-      >
-        <Route
-          path="/club-head"
-          element={<ClubHeadDashboard />}
-        />
-      </Route>
+      />
 
       {/* =====================================================
           404
@@ -225,30 +253,16 @@ function AppRoutes() {
   )
 }
 
-/*
- * =========================================================
- * AUTHENTICATED ROUTE WRAPPER
- * =========================================================
- *
- * We keep ProtectedRoute responsible only for
- * authentication.
- *
- * RoleRoute is responsible for authorization.
- *
- * This separation makes future roles easier to add.
- * =========================================================
- */
+// =========================================================
+// PROTECTED ROUTE WRAPPER
+// =========================================================
 
 function ProtectedRouteWrapper() {
   return (
     <ProtectedRoute>
-      <RoutesOutlet />
+      <Outlet />
     </ProtectedRoute>
   )
-}
-
-function RoutesOutlet() {
-  return <></>
 }
 
 export default AppRoutes

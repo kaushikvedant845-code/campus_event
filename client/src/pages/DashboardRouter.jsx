@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { supabase } from "../../lib/supabase"
+import { supabase } from "../lib/supabase"
 
-import StudentDashboard from "./StudentDashboard"
-import ClubHeadDashboard from "./ClubHeadDashboard"
+import StudentDashboard from "./student/StudentDashboard"
+import ClubHeadDashboard from "./club_head/ClubHeadDashboard"
 
 function DashboardRouter() {
   const navigate = useNavigate()
