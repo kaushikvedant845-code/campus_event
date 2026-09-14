@@ -25,11 +25,10 @@ function FacultyDashboard() {
   // =========================================================
 
   const [rejectionReason, setRejectionReason] = useState("")
-
   const [actionType, setActionType] = useState(null)
 
   // =========================================================
-  // LOAD PENDING EVENT REQUESTS
+  // LOAD PENDING REQUESTS
   // =========================================================
 
   const loadRequests = useCallback(async () => {
@@ -40,9 +39,7 @@ function FacultyDashboard() {
       const {
         data,
         error: rpcError,
-      } = await supabase.rpc(
-        "faculty_event_requests"
-      )
+      } = await supabase.rpc("faculty_event_requests")
 
       if (rpcError) {
         throw rpcError
@@ -73,18 +70,39 @@ function FacultyDashboard() {
   }, [loadRequests])
 
   // =========================================================
+  // AUTOMATIC ACKNOWLEDGEMENT
+  // =========================================================
+
+  const buildAcknowledgement = (
+    finalVenue
+  ) => {
+    return (
+      `Your event request has been approved. ` +
+      `The final venue has been assigned as ${finalVenue}. ` +
+      `Please ensure all arrangements are made as per the institution's event guidelines.`
+    )
+  }
+
+  // =========================================================
   // OPEN REQUEST
   // =========================================================
 
   const openRequest = (request) => {
     setSelectedRequest(request)
 
-    // Default to requested venue.
     setVenueOption("same")
     setNewVenue("")
 
-    // Start with an empty acknowledgement.
-    setAcknowledgement("")
+    const requestedVenue =
+      request.requested_venue?.trim() || ""
+
+    if (requestedVenue) {
+      setAcknowledgement(
+        buildAcknowledgement(requestedVenue)
+      )
+    } else {
+      setAcknowledgement("")
+    }
 
     setRejectionReason("")
     setActionType(null)
@@ -113,7 +131,7 @@ function FacultyDashboard() {
   }
 
   // =========================================================
-  // DETERMINE FINAL VENUE
+  // FINAL VENUE
   // =========================================================
 
   const getFinalVenue = () => {
@@ -132,20 +150,48 @@ function FacultyDashboard() {
   }
 
   // =========================================================
+  // UPDATE AUTOMATIC ACKNOWLEDGEMENT
+  // WHEN VENUE CHANGES
+  // =========================================================
+
+  useEffect(() => {
+    if (
+      !selectedRequest ||
+      actionType !== "approve"
+    ) {
+      return
+    }
+
+    const finalVenue = getFinalVenue()
+
+    if (!finalVenue) {
+      setAcknowledgement("")
+      return
+    }
+
+    setAcknowledgement(
+      buildAcknowledgement(finalVenue)
+    )
+  }, [
+    venueOption,
+    newVenue,
+    selectedRequest,
+    actionType,
+  ])
+
+  // =========================================================
   // APPROVE EVENT
   // =========================================================
 
   const handleApprove = async () => {
-    if (!selectedRequest) return
+    if (!selectedRequest) {
+      return
+    }
 
     setError("")
     setSuccess("")
 
     const finalVenue = getFinalVenue()
-
-    // -------------------------------------------------------
-    // VENUE VALIDATION
-    // -------------------------------------------------------
 
     if (!finalVenue) {
       setError(
@@ -154,23 +200,19 @@ function FacultyDashboard() {
       return
     }
 
-    // -------------------------------------------------------
-    // ACKNOWLEDGEMENT VALIDATION
-    // -------------------------------------------------------
-
     const finalAcknowledgement =
       acknowledgement.trim()
 
     if (!finalAcknowledgement) {
       setError(
-        "Please provide an acknowledgement before approving the event."
+        "Approval acknowledgement could not be generated."
       )
       return
     }
 
     if (finalAcknowledgement.length > 1000) {
       setError(
-        "Acknowledgement must be 1000 characters or less."
+        "Approval acknowledgement is too long."
       )
       return
     }
@@ -178,9 +220,9 @@ function FacultyDashboard() {
     try {
       setActionLoading(true)
 
-      // -----------------------------------------------------
-      // SECURE FACULTY APPROVAL RPC
-      // -----------------------------------------------------
+      // =====================================================
+      // SECURE DATABASE APPROVAL
+      // =====================================================
 
       const {
         data,
@@ -204,16 +246,12 @@ function FacultyDashboard() {
       }
 
       console.log(
-        "Faculty approved event:",
+        "Faculty approval completed. A fresh server-generated verification credential was created for this approval.",
         data
       )
 
-      // -----------------------------------------------------
-      // SUCCESS
-      // -----------------------------------------------------
-
       setSuccess(
-        "Event request approved successfully."
+        "Event approved. Official acknowledgement and a new verification credential have been generated."
       )
 
       setSelectedRequest(null)
@@ -225,7 +263,6 @@ function FacultyDashboard() {
       setRejectionReason("")
       setActionType(null)
 
-      // Refresh pending requests.
       await loadRequests()
     } catch (err) {
       console.error(
@@ -247,7 +284,9 @@ function FacultyDashboard() {
   // =========================================================
 
   const handleReject = async () => {
-    if (!selectedRequest) return
+    if (!selectedRequest) {
+      return
+    }
 
     const reason =
       rejectionReason.trim()
@@ -255,6 +294,13 @@ function FacultyDashboard() {
     if (!reason) {
       setError(
         "Please provide a rejection reason."
+      )
+      return
+    }
+
+    if (reason.length > 1000) {
+      setError(
+        "Rejection reason must be 1000 characters or less."
       )
       return
     }
@@ -283,7 +329,7 @@ function FacultyDashboard() {
       }
 
       console.log(
-        "Faculty rejected event:",
+        "Faculty rejection completed:",
         data
       )
 
@@ -317,7 +363,7 @@ function FacultyDashboard() {
   }
 
   // =========================================================
-  // FORMAT DATE
+  // DATE FORMAT
   // =========================================================
 
   const formatDate = (date) => {
@@ -339,15 +385,16 @@ function FacultyDashboard() {
     return parsedDate.toLocaleDateString(
       "en-IN",
       {
+        weekday: "long",
         day: "numeric",
-        month: "short",
+        month: "long",
         year: "numeric",
       }
     )
   }
 
   // =========================================================
-  // FORMAT TIME
+  // TIME FORMAT
   // =========================================================
 
   const formatTime = (time) => {
@@ -383,7 +430,7 @@ function FacultyDashboard() {
   }
 
   // =========================================================
-  // LOADING SCREEN
+  // LOADING
   // =========================================================
 
   if (loading) {
@@ -417,9 +464,9 @@ function FacultyDashboard() {
   return (
     <main className="dashboard-page">
 
-      {/* ===================================================
+      {/* =====================================================
           HEADER
-      =================================================== */}
+      ===================================================== */}
 
       <section className="dashboard-empty-state">
 
@@ -438,9 +485,9 @@ function FacultyDashboard() {
 
       </section>
 
-      {/* ===================================================
-          SUCCESS MESSAGE
-      =================================================== */}
+      {/* =====================================================
+          SUCCESS
+      ===================================================== */}
 
       {success && (
         <section>
@@ -450,9 +497,9 @@ function FacultyDashboard() {
         </section>
       )}
 
-      {/* ===================================================
-          ERROR MESSAGE
-      =================================================== */}
+      {/* =====================================================
+          ERROR
+      ===================================================== */}
 
       {error && !selectedRequest && (
         <section>
@@ -462,9 +509,9 @@ function FacultyDashboard() {
         </section>
       )}
 
-      {/* ===================================================
+      {/* =====================================================
           EVENT MANAGEMENT
-      =================================================== */}
+      ===================================================== */}
 
       <section>
 
@@ -482,7 +529,7 @@ function FacultyDashboard() {
         </p>
 
         {/* =================================================
-            NO REQUESTS
+            EMPTY
         ================================================= */}
 
         {requests.length === 0 ? (
@@ -506,6 +553,7 @@ function FacultyDashboard() {
 
           </div>
         ) : (
+
           /* =================================================
              REQUEST LIST
           ================================================= */
@@ -596,9 +644,9 @@ function FacultyDashboard() {
 
       </section>
 
-      {/* ===================================================
+      {/* =====================================================
           REQUEST REVIEW
-      =================================================== */}
+      ===================================================== */}
 
       {selectedRequest && (
         <div
@@ -610,7 +658,7 @@ function FacultyDashboard() {
           <section>
 
             {/* =================================================
-                REQUEST HEADER
+                HEADER
             ================================================= */}
 
             <p>
@@ -732,7 +780,7 @@ function FacultyDashboard() {
             <hr />
 
             {/* =================================================
-                FACULTY DECISION
+                DECISION
             ================================================= */}
 
             <h3>
@@ -744,6 +792,15 @@ function FacultyDashboard() {
               onClick={() => {
                 setActionType("approve")
                 setError("")
+
+                const venue =
+                  getFinalVenue()
+
+                if (venue) {
+                  setAcknowledgement(
+                    buildAcknowledgement(venue)
+                  )
+                }
               }}
               disabled={actionLoading}
             >
@@ -762,7 +819,7 @@ function FacultyDashboard() {
             </button>
 
             {/* =================================================
-                APPROVAL FLOW
+                APPROVAL
             ================================================= */}
 
             {actionType === "approve" && (
@@ -775,13 +832,14 @@ function FacultyDashboard() {
                 </h3>
 
                 <p>
-                  Select the final venue for
-                  the approved event.
+                  Select the final venue that
+                  will appear on the official
+                  approval acknowledgement.
                 </p>
 
-                {/* =================================================
-                    SAME AS REQUESTED
-                ================================================= */}
+                {/* =============================================
+                    SAME VENUE
+                ============================================= */}
 
                 <div>
 
@@ -815,9 +873,9 @@ function FacultyDashboard() {
 
                 </div>
 
-                {/* =================================================
+                {/* =============================================
                     NEW VENUE
-                ================================================= */}
+                ============================================= */}
 
                 <div>
 
@@ -857,7 +915,7 @@ function FacultyDashboard() {
                           )
                           setError("")
                         }}
-                        placeholder="Enter new venue"
+                        placeholder="Enter final venue"
                         maxLength={200}
                         disabled={actionLoading}
                       />
@@ -867,9 +925,9 @@ function FacultyDashboard() {
 
                 </div>
 
-                {/* =================================================
-                    FINAL VENUE PREVIEW
-                ================================================= */}
+                {/* =============================================
+                    FINAL VENUE
+                ============================================= */}
 
                 <div>
 
@@ -886,52 +944,48 @@ function FacultyDashboard() {
 
                 <hr />
 
-                {/* =================================================
-                    ACKNOWLEDGEMENT
-                ================================================= */}
+                {/* =============================================
+                    OFFICIAL ACKNOWLEDGEMENT PREVIEW
+                ============================================= */}
 
-                <div>
+                <section>
+
+                  <p>
+                    OFFICIAL ACKNOWLEDGEMENT
+                  </p>
 
                   <h3>
-                    Acknowledgement
+                    Event Approval Message
                   </h3>
 
                   <p>
-                    This message will be stored
-                    with the approval and shown
-                    to the Club Head.
+                    This acknowledgement will
+                    be permanently stored with
+                    the faculty approval.
                   </p>
 
-                  <label
-                    htmlFor="faculty-acknowledgement"
-                  >
-                    Acknowledgement Message
-                  </label>
+                  <div>
 
-                  <textarea
-                    id="faculty-acknowledgement"
-                    value={acknowledgement}
-                    onChange={(event) => {
-                      setAcknowledgement(
-                        event.target.value
-                      )
-                      setError("")
-                    }}
-                    placeholder="Example: Your event request has been approved. The final venue has been assigned as requested."
-                    rows={5}
-                    maxLength={1000}
-                    disabled={actionLoading}
-                  />
+                    <p>
+                      “{acknowledgement ||
+                        "Approval message will be generated after a final venue is assigned."}”
+                    </p>
 
-                  <p>
-                    {acknowledgement.length}/1000
-                  </p>
+                  </div>
 
-                </div>
+                  <small>
+                    The final approval timestamp,
+                    approving faculty identity,
+                    digital signature and official
+                    stamp will be attached to the
+                    acknowledgement after approval.
+                  </small>
 
-                {/* =================================================
-                    APPROVAL ERROR
-                ================================================= */}
+                </section>
+
+                {/* =============================================
+                    ERROR
+                ============================================= */}
 
                 {error && (
                   <p>
@@ -939,9 +993,9 @@ function FacultyDashboard() {
                   </p>
                 )}
 
-                {/* =================================================
-                    CONFIRM APPROVAL
-                ================================================= */}
+                {/* =============================================
+                    CONFIRM
+                ============================================= */}
 
                 <div>
 
@@ -950,8 +1004,7 @@ function FacultyDashboard() {
                     onClick={handleApprove}
                     disabled={
                       actionLoading ||
-                      !getFinalVenue() ||
-                      !acknowledgement.trim()
+                      !getFinalVenue()
                     }
                   >
                     {actionLoading
@@ -978,7 +1031,7 @@ function FacultyDashboard() {
             )}
 
             {/* =================================================
-                REJECTION FLOW
+                REJECTION
             ================================================= */}
 
             {actionType === "reject" && (

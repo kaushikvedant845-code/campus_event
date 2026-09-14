@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { supabase } from "../../lib/supabase"
 import "./ClubHeadDashboard.css"
+
 function ClubHeadDashboard() {
   // =========================================================
   // PROFILE / CLUB
@@ -35,17 +36,10 @@ function ClubHeadDashboard() {
   // REQUEST FORM
   // =========================================================
 
-  const [showRequestForm, setShowRequestForm] =
-    useState(false)
-
-  const [submitting, setSubmitting] =
-    useState(false)
-
-  const [formError, setFormError] =
-    useState("")
-
-  const [formSuccess, setFormSuccess] =
-    useState("")
+  const [showRequestForm, setShowRequestForm] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState("")
+  const [formSuccess, setFormSuccess] = useState("")
 
   const [form, setForm] = useState({
     title: "",
@@ -62,35 +56,24 @@ function ClubHeadDashboard() {
   // REQUEST DETAILS
   // =========================================================
 
-  const [selectedRequest, setSelectedRequest] =
-    useState(null)
+  const [selectedRequest, setSelectedRequest] = useState(null)
 
   // =========================================================
   // APPROVAL ACKNOWLEDGEMENT
   // =========================================================
 
-  const [approvalEvent, setApprovalEvent] =
-    useState(null)
-
-  const [showApproval, setShowApproval] =
-    useState(false)
-
-  const [approvalAssets, setApprovalAssets] =
-    useState(null)
-
-  const [approvalLoading, setApprovalLoading] =
-    useState(false)
-
-  const [approvalError, setApprovalError] =
-    useState("")
+  const [approvalEvent, setApprovalEvent] = useState(null)
+  const [showApproval, setShowApproval] = useState(false)
+  const [approvalAssets, setApprovalAssets] = useState(null)
+  const [approvalLoading, setApprovalLoading] = useState(false)
+  const [approvalError, setApprovalError] = useState("")
+  const [approvalVerification, setApprovalVerification] = useState(null)
 
   // =========================================================
   // LOAD DASHBOARD
   // =========================================================
 
-  const loadDashboard = async (
-    requestedClubId = null
-  ) => {
+  const loadDashboard = async (requestedClubId = null) => {
     setLoading(true)
     setError("")
 
@@ -180,13 +163,8 @@ function ClubHeadDashboard() {
       // ACTIVE CLUBS
       // -------------------------------------------------------
 
-      const activeClubs = (
-        membershipData || []
-      )
-        .map(
-          (membership) =>
-            membership.clubs
-        )
+      const activeClubs = (membershipData || [])
+        .map((membership) => membership.clubs)
         .filter(
           (item) =>
             item &&
@@ -206,8 +184,7 @@ function ClubHeadDashboard() {
       // -------------------------------------------------------
 
       const preferredClubId =
-        requestedClubId ||
-        selectedClubId
+        requestedClubId || selectedClubId
 
       const selectedClub =
         activeClubs.find(
@@ -246,14 +223,21 @@ function ClubHeadDashboard() {
           member_early_access,
           visibility,
           registration_access,
+
+          approved_by,
+          approved_by_name,
+          approved_by_designation,
           approved_at,
+
           approval_asset_id,
           faculty_acknowledgement,
+
           rejection_reason,
           rejected_at,
           published_at,
           created_at,
           updated_at,
+
           clubs (
             id,
             name,
@@ -303,16 +287,14 @@ function ClubHeadDashboard() {
   // =========================================================
 
   const handleClubChange = (event) => {
-    const nextClubId =
-      event.target.value
+    const nextClubId = event.target.value
 
     setSelectedClubId(nextClubId)
 
-    const nextClub =
-      clubs.find(
-        (item) =>
-          item.id === nextClubId
-      )
+    const nextClub = clubs.find(
+      (item) =>
+        item.id === nextClubId
+    )
 
     if (nextClub) {
       setClub(nextClub)
@@ -368,9 +350,7 @@ function ClubHeadDashboard() {
   // SUBMIT EVENT REQUEST
   // =========================================================
 
-  const handleRequestSubmit = async (
-    event
-  ) => {
+  const handleRequestSubmit = async (event) => {
     event.preventDefault()
 
     setFormError("")
@@ -535,9 +515,7 @@ function ClubHeadDashboard() {
   // HELPERS
   // =========================================================
 
-  const getApprovalLabel = (
-    event
-  ) => {
+  const getApprovalLabel = (event) => {
     if (
       event.approval_status ===
       "APPROVED"
@@ -562,9 +540,7 @@ function ClubHeadDashboard() {
     return "Pending"
   }
 
-  const getApprovalClass = (
-    event
-  ) => {
+  const getApprovalClass = (event) => {
     if (
       event.approval_status ===
       "APPROVED"
@@ -582,9 +558,7 @@ function ClubHeadDashboard() {
     return "waiting"
   }
 
-  const formatDate = (
-    date
-  ) => {
+  const formatDate = (date) => {
     if (!date) {
       return "Date pending"
     }
@@ -612,9 +586,7 @@ function ClubHeadDashboard() {
     )
   }
 
-  const formatApprovalEventDate = (
-    date
-  ) => {
+  const formatApprovalEventDate = (date) => {
     if (!date) {
       return "Not specified"
     }
@@ -643,9 +615,7 @@ function ClubHeadDashboard() {
     )
   }
 
-  const formatTime = (
-    time
-  ) => {
+  const formatTime = (time) => {
     if (!time) {
       return ""
     }
@@ -711,20 +681,71 @@ function ClubHeadDashboard() {
   }
 
   // =========================================================
+  // APPROVAL VERIFICATION HELPERS
+  // =========================================================
+
+  const getApprovalVerificationUrl = (token) => {
+    if (!token) {
+      return ""
+    }
+
+    return `${window.location.origin}/verify/${encodeURIComponent(token)}`
+  }
+
+  const getApprovalQrUrl = (code) => {
+    const verificationUrl =
+      getApprovalVerificationUrl(code)
+
+    if (!verificationUrl) {
+      return ""
+    }
+
+    return `https://quickchart.io/qr?text=${encodeURIComponent(
+      verificationUrl
+    )}&size=132&margin=2&ecLevel=H`
+  }
+
+  // =========================================================
+  // =========================================================
+  // PRINT APPROVAL SNAPSHOT
+  // =========================================================
+  const printApprovalSnapshot = () => {
+    window.print()
+  }
+
   // OPEN APPROVAL
   // =========================================================
 
-  const openApproval = async (
-    event
-  ) => {
+  const openApproval = async (event) => {
     setApprovalEvent(event)
     setShowApproval(true)
 
     setApprovalAssets(null)
     setApprovalError("")
     setApprovalLoading(true)
+    setApprovalVerification(null)
 
     try {
+      // -----------------------------------------------------
+      // SECURE VERIFICATION CREDENTIAL
+      // -----------------------------------------------------
+
+      const {
+        data: verificationData,
+        error: verificationError,
+      } = await supabase.rpc(
+        "club_head_approval_verification",
+        { p_event_id: event.id }
+      )
+
+      if (verificationError) {
+        throw verificationError
+      }
+
+      setApprovalVerification(
+        verificationData?.[0] || null
+      )
+
       let assetData = null
 
       // -------------------------------------------------------
@@ -747,10 +768,10 @@ function ClubHeadDashboard() {
               institution_name,
               office_name,
               certificate_title,
+              signature_name,
               signature_designation,
               signature_url,
-              stamp_url,
-              watermark_url
+              stamp_url
             `)
             .eq(
               "id",
@@ -783,10 +804,10 @@ function ClubHeadDashboard() {
               institution_name,
               office_name,
               certificate_title,
+              signature_name,
               signature_designation,
               signature_url,
-              stamp_url,
-              watermark_url
+              stamp_url
             `)
             .eq(
               "is_active",
@@ -834,6 +855,7 @@ function ClubHeadDashboard() {
     setApprovalEvent(null)
     setApprovalAssets(null)
     setApprovalError("")
+    setApprovalVerification(null)
   }
 
   // =========================================================
@@ -999,7 +1021,6 @@ function ClubHeadDashboard() {
 
           </div>
 
-
           <div className="club-profile-name">
 
             <h1>
@@ -1014,7 +1035,6 @@ function ClubHeadDashboard() {
           </div>
 
         </div>
-
 
         {/* MULTIPLE CLUBS */}
 
@@ -1058,7 +1078,6 @@ function ClubHeadDashboard() {
 
       </section>
 
-
       {/* =====================================================
           INSTAGRAM STYLE EVENT STATS
       ===================================================== */}
@@ -1090,7 +1109,6 @@ function ClubHeadDashboard() {
 
         </button>
 
-
         <button
           type="button"
           className={
@@ -1115,7 +1133,6 @@ function ClubHeadDashboard() {
           </span>
 
         </button>
-
 
         <button
           type="button"
@@ -1144,7 +1161,6 @@ function ClubHeadDashboard() {
 
       </section>
 
-
       {/* =====================================================
           MY EVENTS
       ===================================================== */}
@@ -1159,66 +1175,79 @@ function ClubHeadDashboard() {
 
         </div>
 
-
         {/* =================================================
             ACTION BUTTONS
         ================================================= */}
 
         <div className="club-event-links">
 
-  {/* APPROVED EVENTS */}
-  <button
-    type="button"
-    className={
-      eventFilter === "approved"
-        ? "club-event-link active"
-        : "club-event-link"
-    }
-    onClick={() => setEventFilter("approved")}
-  >
-    Approved Events
-  </button>
+          {/* APPROVED EVENTS */}
 
+          <button
+            type="button"
+            className={
+              eventFilter === "approved"
+                ? "club-event-link active"
+                : "club-event-link"
+            }
+            onClick={() =>
+              setEventFilter(
+                "approved"
+              )
+            }
+          >
+            Approved Events
+          </button>
 
-  {/* LISTED EVENTS */}
-  <button
-    type="button"
-    className={
-      eventFilter === "listed"
-        ? "club-event-link active"
-        : "club-event-link"
-    }
-    onClick={() => setEventFilter("listed")}
-  >
-    Listed Events
-  </button>
+          {/* LISTED EVENTS */}
 
+          <button
+            type="button"
+            className={
+              eventFilter === "listed"
+                ? "club-event-link active"
+                : "club-event-link"
+            }
+            onClick={() =>
+              setEventFilter(
+                "listed"
+              )
+            }
+          >
+            Listed Events
+          </button>
 
-  {/* PENDING REQUESTS */}
-  <button
-    type="button"
-    className={
-      eventFilter === "pending"
-        ? "club-event-link active"
-        : "club-event-link"
-    }
-    onClick={() => setEventFilter("pending")}
-  >
-    Pending Requests
-  </button>
+          {/* PENDING REQUESTS */}
 
+          <button
+            type="button"
+            className={
+              eventFilter === "pending"
+                ? "club-event-link active"
+                : "club-event-link"
+            }
+            onClick={() =>
+              setEventFilter(
+                "pending"
+              )
+            }
+          >
+            Pending Requests
+          </button>
 
-  {/* NEW REQUEST */}
-  <button
-    type="button"
-    className="club-event-link club-event-link-primary"
-    onClick={openRequestForm}
-  >
-    + New Request
-  </button>
+          {/* NEW REQUEST */}
 
-</div>
+          <button
+            type="button"
+            className="club-event-link club-event-link-primary"
+            onClick={
+              openRequestForm
+            }
+          >
+            + New Request
+          </button>
 
+        </div>
 
         {/* =================================================
             FILTER RESET
@@ -1240,7 +1269,6 @@ function ClubHeadDashboard() {
           </button>
 
         )}
-
 
         {/* =================================================
             EVENTS
@@ -1268,7 +1296,6 @@ function ClubHeadDashboard() {
                 : "No events yet"}
 
             </h3>
-
 
             {eventFilter ===
               "all" && (
@@ -1311,11 +1338,9 @@ function ClubHeadDashboard() {
                       )}
                     </span>
 
-
                     <h3>
                       {event.title}
                     </h3>
-
 
                     <div className="club-event-row-details">
 
@@ -1349,7 +1374,6 @@ function ClubHeadDashboard() {
 
                   </div>
 
-
                   {/* ACTIONS */}
 
                   <div className="club-event-row-actions">
@@ -1365,7 +1389,6 @@ function ClubHeadDashboard() {
                         >
                           View Event
                         </Link>
-
 
                         <button
                           type="button"
@@ -1409,7 +1432,6 @@ function ClubHeadDashboard() {
         )}
 
       </section>
-
 
       {/* =====================================================
           REQUEST DETAILS MODAL
@@ -1456,7 +1478,6 @@ function ClubHeadDashboard() {
 
               </div>
 
-
               <button
                 type="button"
                 className="club-request-close"
@@ -1470,7 +1491,6 @@ function ClubHeadDashboard() {
               </button>
 
             </div>
-
 
             <div className="club-request-details">
 
@@ -1487,7 +1507,6 @@ function ClubHeadDashboard() {
 
               </div>
 
-
               <div>
 
                 <span>
@@ -1501,7 +1520,6 @@ function ClubHeadDashboard() {
                 </strong>
 
               </div>
-
 
               <div>
 
@@ -1525,7 +1543,6 @@ function ClubHeadDashboard() {
 
               </div>
 
-
               <div>
 
                 <span>
@@ -1539,7 +1556,6 @@ function ClubHeadDashboard() {
 
               </div>
 
-
               <div>
 
                 <span>
@@ -1552,7 +1568,6 @@ function ClubHeadDashboard() {
                 </strong>
 
               </div>
-
 
               <div>
 
@@ -1570,7 +1585,6 @@ function ClubHeadDashboard() {
 
             </div>
 
-
             {selectedRequest.description && (
 
               <div className="club-request-description">
@@ -1587,7 +1601,6 @@ function ClubHeadDashboard() {
 
             )}
 
-
             {selectedRequest.rejection_reason && (
 
               <div className="club-request-note">
@@ -1603,7 +1616,6 @@ function ClubHeadDashboard() {
               </div>
 
             )}
-
 
             {selectedRequest.approval_status ===
               "APPROVED" && (
@@ -1635,10 +1647,49 @@ function ClubHeadDashboard() {
                   </>
                 )}
 
+                {selectedRequest.approved_by_name && (
+                  <>
+                    <br />
+                    <br />
+
+                    <strong>
+                      Approved By
+                    </strong>
+
+                    <br />
+
+                    {selectedRequest.approved_by_name}
+
+                    {selectedRequest.approved_by_designation && (
+                      <>
+                        <br />
+                        {selectedRequest.approved_by_designation}
+                      </>
+                    )}
+                  </>
+                )}
+
+                {selectedRequest.approved_at && (
+                  <>
+                    <br />
+                    <br />
+
+                    <strong>
+                      Approved On
+                    </strong>
+
+                    <br />
+
+                    {formatApprovalTimestamp(
+                      selectedRequest.approved_at
+                    )}{" "}
+                    IST
+                  </>
+                )}
+
               </div>
 
             )}
-
 
             <div className="club-request-actions">
 
@@ -1658,7 +1709,6 @@ function ClubHeadDashboard() {
                 </button>
 
               )}
-
 
               <button
                 type="button"
@@ -1680,7 +1730,6 @@ function ClubHeadDashboard() {
 
       )}
 
-
       {/* =====================================================
           OFFICIAL APPROVAL DOCUMENT
       ===================================================== */}
@@ -1689,7 +1738,7 @@ function ClubHeadDashboard() {
         approvalEvent && (
 
         <div
-          className="club-request-overlay"
+          className="club-request-overlay club-approval-overlay"
           onMouseDown={(
             event
           ) => {
@@ -1719,18 +1768,15 @@ function ClubHeadDashboard() {
                 Event Approval
               </h2>
 
-
               <div className="club-approval-toolbar-actions">
 
                 <button
                   type="button"
                   className="secondary-button"
-                  disabled
-                  title="PDF export will be added later"
+                  onClick={printApprovalSnapshot}
                 >
                   Print / Save as PDF
                 </button>
-
 
                 <button
                   type="button"
@@ -1746,24 +1792,9 @@ function ClubHeadDashboard() {
 
             </div>
 
-
             {/* DOCUMENT */}
 
             <article className="club-approval-document">
-
-              {approvalAssets?.watermark_url && (
-
-                <img
-                  src={
-                    approvalAssets.watermark_url
-                  }
-                  alt=""
-                  aria-hidden="true"
-                  className="club-approval-watermark"
-                />
-
-              )}
-
 
               <div className="club-approval-document-content">
 
@@ -1792,12 +1823,11 @@ function ClubHeadDashboard() {
 
                   </div>
 
-
                   <div className="club-approval-office">
 
                     <strong>
                       {approvalAssets?.office_name ||
-                        "Office of Student Affairs"}
+                        "Office of Event Management"}
                     </strong>
 
                     <span>
@@ -1811,7 +1841,6 @@ function ClubHeadDashboard() {
                   </div>
 
                 </header>
-
 
                 {/* APPROVED */}
 
@@ -1841,7 +1870,6 @@ function ClubHeadDashboard() {
 
                 </section>
 
-
                 {/* EVENT INFORMATION */}
 
                 <section className="club-approval-grid">
@@ -1860,19 +1888,30 @@ function ClubHeadDashboard() {
 
                     </div>
 
-
                     <div className="club-approval-row">
 
                       <span>
                         Event Title
                       </span>
 
-                      <strong>
-                        {approvalEvent.title}
-                      </strong>
+                      <div className="club-approval-title-wrap">
+
+                        <strong className="club-approval-event-title">
+                          {approvalEvent.title}
+                        </strong>
+
+                        {approvalAssets?.stamp_url && (
+                          <img
+                            src={approvalAssets.stamp_url}
+                            alt=""
+                            aria-hidden="true"
+                            className="club-approval-title-stamp"
+                          />
+                        )}
+
+                      </div>
 
                     </div>
-
 
                     <div className="club-approval-row">
 
@@ -1887,7 +1926,6 @@ function ClubHeadDashboard() {
                       </strong>
 
                     </div>
-
 
                     <div className="club-approval-row">
 
@@ -1904,10 +1942,9 @@ function ClubHeadDashboard() {
 
                   </div>
 
-
                   {/* APPROVED DETAILS */}
 
-                  <div className="club-approval-panel">
+                  <div className="club-approval-panel club-approval-details-panel">
 
                     <div className="club-approval-panel-title">
 
@@ -1920,7 +1957,6 @@ function ClubHeadDashboard() {
                       </h3>
 
                     </div>
-
 
                     <div className="club-approval-row">
 
@@ -1935,7 +1971,6 @@ function ClubHeadDashboard() {
                       </strong>
 
                     </div>
-
 
                     <div className="club-approval-row">
 
@@ -1959,7 +1994,6 @@ function ClubHeadDashboard() {
 
                     </div>
 
-
                     <div className="club-approval-row">
 
                       <span>
@@ -1973,7 +2007,6 @@ function ClubHeadDashboard() {
                       </strong>
 
                     </div>
-
 
                     <div className="club-approval-row">
 
@@ -1992,7 +2025,6 @@ function ClubHeadDashboard() {
 
                 </section>
 
-
                 {/* FACULTY ACKNOWLEDGEMENT */}
 
                 <section className="club-approval-acknowledgement">
@@ -2009,7 +2041,6 @@ function ClubHeadDashboard() {
 
                   </div>
 
-
                   <div className="club-approval-acknowledgement-body">
 
                     <span>
@@ -2025,7 +2056,6 @@ function ClubHeadDashboard() {
 
                 </section>
 
-
                 {/* SIGNATURE + STAMP */}
 
                 <section className="club-approval-authority">
@@ -2037,17 +2067,24 @@ function ClubHeadDashboard() {
                     </span>
 
                     <strong>
-                      {approvalAssets?.signature_designation ||
+                      {approvalEvent.approved_by_name ||
+                        approvalAssets?.signature_name ||
+                        approvalAssets?.signature_designation ||
                         "Faculty Approval Authority"}
                     </strong>
 
                     <small>
+                      {approvalEvent.approved_by_designation ||
+                        approvalAssets?.signature_designation ||
+                        "Faculty Approval Authority"}
+                    </small>
+
+                    <small>
                       {approvalAssets?.office_name ||
-                        "Office of Student Affairs"}
+                        "Office of Event Management"}
                     </small>
 
                   </div>
-
 
                   <div className="club-approval-signature">
 
@@ -2074,32 +2111,80 @@ function ClubHeadDashboard() {
 
                   </div>
 
+                </section>
 
-                  <div className="club-approval-stamp">
+                {/* VENUE VERIFICATION */}
 
-                    {approvalAssets?.stamp_url ? (
+                <section className="club-approval-verification">
 
-                      <img
-                        src={
-                          approvalAssets.stamp_url
-                        }
-                        alt="Official approval stamp"
-                      />
+                  <div className="club-approval-verification-heading">
+                    <span>VENUE VERIFICATION</span>
+                    <strong>Scan this QR code to verify this approval.</strong>
+                    <p>
+                      Guards should verify the event, date, time and final venue
+                      shown on the live verification page.
+                    </p>
+                  </div>
 
-                    ) : (
+                  <div className="club-approval-verification-options">
 
-                      <div className="club-approval-stamp-placeholder">
-                        OFFICIAL
-                        <br />
-                        APPROVAL
+                    {/* QR — completely independent from the fallback code */}
+                    <div className="club-approval-qr-card">
+
+                      {approvalVerification?.verification_code ? (
+                        <img
+                          src={getApprovalQrUrl(
+                            approvalVerification.verification_code
+                          )}
+                          alt="QR code for official event approval verification"
+                          width="180"
+                          height="180"
+                          loading="eager"
+                          referrerPolicy="no-referrer"
+                          onError={(event) => {
+                            event.currentTarget.style.display = "none"
+                          }}
+                        />
+                      ) : (
+                        <div className="club-approval-qr-placeholder">
+                          QR unavailable
+                        </div>
+                      )}
+
+                      <small>SCAN TO VERIFY</small>
+                      <span>Preferred Method</span>
+
+                    </div>
+
+                    <div className="club-approval-verification-divider">
+                      OR
+                    </div>
+
+                    {/* FALLBACK CODE — ALWAYS RENDERED SEPARATELY */}
+                    <div className="club-approval-code-card">
+
+                      <div className="club-approval-code-icon">
+                        ✓
                       </div>
 
-                    )}
+                      <span>
+                        VERIFICATION CODE
+                      </span>
+
+                      <strong className="club-approval-verification-code">
+                        {approvalVerification?.verification_code ||
+                          "Verification code unavailable"}
+                      </strong>
+
+                      <p>
+                        Use this code if the QR code cannot be scanned.
+                      </p>
+
+                    </div>
 
                   </div>
 
                 </section>
-
 
                 {/* TIMESTAMP */}
 
@@ -2131,7 +2216,6 @@ function ClubHeadDashboard() {
 
             </article>
 
-
             {approvalLoading && (
 
               <p className="club-approval-loading">
@@ -2139,7 +2223,6 @@ function ClubHeadDashboard() {
               </p>
 
             )}
-
 
             {approvalError && (
 
@@ -2154,7 +2237,6 @@ function ClubHeadDashboard() {
         </div>
 
       )}
-
 
       {/* =====================================================
           NEW EVENT REQUEST MODAL
@@ -2199,7 +2281,6 @@ function ClubHeadDashboard() {
 
               </div>
 
-
               <button
                 type="button"
                 className="club-request-close"
@@ -2214,7 +2295,6 @@ function ClubHeadDashboard() {
               </button>
 
             </div>
-
 
             <form
               className="club-request-form"
@@ -2247,7 +2327,6 @@ function ClubHeadDashboard() {
                 />
 
               </div>
-
 
               {/* CATEGORY */}
 
@@ -2305,7 +2384,6 @@ function ClubHeadDashboard() {
 
               </div>
 
-
               {/* DESCRIPTION */}
 
               <div className="club-form-field">
@@ -2329,7 +2407,6 @@ function ClubHeadDashboard() {
                 />
 
               </div>
-
 
               {/* DATE + TIME */}
 
@@ -2361,7 +2438,6 @@ function ClubHeadDashboard() {
 
                 </div>
 
-
                 <div className="club-form-field">
 
                   <label htmlFor="start-time">
@@ -2382,7 +2458,6 @@ function ClubHeadDashboard() {
                   />
 
                 </div>
-
 
                 <div className="club-form-field">
 
@@ -2406,7 +2481,6 @@ function ClubHeadDashboard() {
                 </div>
 
               </div>
-
 
               {/* PARTICIPANTS + VENUE */}
 
@@ -2435,7 +2509,6 @@ function ClubHeadDashboard() {
 
                 </div>
 
-
                 <div className="club-form-field">
 
                   <label htmlFor="requested-venue">
@@ -2461,7 +2534,6 @@ function ClubHeadDashboard() {
 
               </div>
 
-
               {/* ERROR */}
 
               {formError && (
@@ -2472,7 +2544,6 @@ function ClubHeadDashboard() {
 
               )}
 
-
               {/* SUCCESS */}
 
               {formSuccess && (
@@ -2482,7 +2553,6 @@ function ClubHeadDashboard() {
                 </div>
 
               )}
-
 
               {/* ACTIONS */}
 
@@ -2500,7 +2570,6 @@ function ClubHeadDashboard() {
                 >
                   Cancel
                 </button>
-
 
                 <button
                   type="submit"

@@ -1,90 +1,194 @@
 /* =========================================================
+   CLUB HEAD DASHBOARD
+   ========================================================= */
+
+.club-dashboard-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #f4f7fb;
+  color: #102a56;
+  box-sizing: border-box;
+}
+
+.club-dashboard-page *,
+.club-dashboard-page *::before,
+.club-dashboard-page *::after {
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LOADING / ERROR
+   ========================================================= */
+
+.loading-card,
+.error-card {
+  max-width: 700px;
+  margin: 80px auto;
+  padding: 40px;
+  background: #ffffff;
+  border: 1px solid #dbe3ef;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 12px 35px rgba(16, 42, 86, 0.08);
+}
+
+.loading-spinner {
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 16px;
+  border: 4px solid #dce6f5;
+  border-top-color: #1d477d;
+  border-radius: 50%;
+  animation: clubSpin 0.8s linear infinite;
+}
+
+@keyframes clubSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-card h2 {
+  margin: 0 0 10px;
+}
+
+.error-card p {
+  color: #64748b;
+  margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.primary-button,
+.secondary-button {
+  border-radius: 10px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.primary-button {
+  border: 1px solid #1d477d;
+  background: #1d477d;
+  color: #ffffff;
+}
+
+.primary-button:hover {
+  background: #153962;
+  transform: translateY(-1px);
+  box-shadow: 0 7px 18px rgba(29, 71, 125, 0.2);
+}
+
+.secondary-button {
+  border: 1px solid #cbd8e8;
+  background: #ffffff;
+  color: #173e70;
+}
+
+.secondary-button:hover {
+  background: #f0f5fb;
+  border-color: #9eb4d0;
+}
+
+.secondary-button:disabled,
+.primary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
    CLUB PROFILE HEADER
-========================================================= */
+   ========================================================= */
 
 .club-profile-header {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 34px 24px 20px;
+  max-width: 1180px;
+  margin: 0 auto 26px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 24px;
+
+  padding: 24px 28px;
+
+  background: #ffffff;
+  border: 1px solid #dce5f0;
+  border-radius: 20px;
+
+  box-shadow: 0 10px 30px rgba(16, 42, 86, 0.06);
 }
 
 .club-profile-identity {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
 .club-profile-avatar {
-  width: 82px;
-  height: 82px;
-
-  border-radius: 50%;
+  width: 62px;
+  height: 62px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: #182f57;
-  color: white;
+  border-radius: 50%;
 
-  font-size: 32px;
+  background: #1d477d;
+  color: #ffffff;
+
+  font-size: 24px;
   font-weight: 800;
-
-  border: 4px solid white;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
 }
 
 .club-profile-name h1 {
   margin: 0;
 
-  font-size: 30px;
-  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.1;
 
-  color: #10284d;
+  color: #102a56;
 }
 
 .club-profile-name p {
-  margin: 5px 0 0;
+  margin: 6px 0 0;
 
-  color: #70809a;
-  font-size: 15px;
+  color: #70829b;
+  font-size: 14px;
+  font-weight: 600;
 }
-
-
-/* =========================================================
-   CLUB SELECTOR
-========================================================= */
 
 .club-profile-selector {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  gap: 10px;
 }
 
 .club-profile-selector label {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  color: #71809a;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  color: #6d7f98;
 }
 
 .club-profile-selector select {
-  min-width: 180px;
+  min-width: 170px;
+  padding: 10px 12px;
 
-  padding: 10px 14px;
+  border: 1px solid #cbd8e8;
+  border-radius: 9px;
 
-  border: 1px solid #d7deea;
-  border-radius: 10px;
-
-  background: white;
-  color: #162d51;
+  background: #ffffff;
+  color: #173e70;
 
   font-size: 14px;
 }
@@ -92,112 +196,128 @@
 
 /* =========================================================
    INSTAGRAM STYLE STATS
-========================================================= */
+   ========================================================= */
 
 .club-profile-stats {
-  max-width: 1100px;
-  margin: 0 auto;
-
-  padding: 18px 24px;
+  max-width: 1180px;
+  margin: 0 auto 42px;
 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 
-  border-top: 1px solid #e1e6ef;
-  border-bottom: 1px solid #e1e6ef;
+  border-top: 1px solid #dce5f0;
+  border-bottom: 1px solid #dce5f0;
+
+  background: #ffffff;
+  border-radius: 14px;
+
+  overflow: hidden;
 }
 
 .club-stat {
-  appearance: none;
+  position: relative;
+
+  min-height: 92px;
+
   border: 0;
-  background: transparent;
+  border-right: 1px solid #e1e8f1;
+
+  background: #ffffff;
+
+  color: #102a56;
 
   cursor: pointer;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 72px;
-
-  color: #10284d;
 }
 
-.club-stat + .club-stat {
-  border-left: 1px solid #e1e6ef;
+.club-stat:last-child {
+  border-right: 0;
 }
 
 .club-stat strong {
-  font-size: 26px;
-  font-weight: 800;
+  display: block;
+
+  font-size: 28px;
+  line-height: 1;
+
+  margin-bottom: 7px;
 }
 
 .club-stat span {
-  margin-top: 5px;
+  display: block;
+
+  color: #70829b;
 
   font-size: 11px;
-  font-weight: 700;
-
-  color: #71809a;
-
+  font-weight: 800;
   letter-spacing: 0.08em;
 }
 
-.club-stat:hover strong {
-  opacity: 0.7;
+.club-stat:hover {
+  background: #f7faff;
+}
+
+.club-stat.active {
+  background: #eef4fb;
+}
+
+.club-stat.active::after {
+  content: "";
+
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: 0;
+
+  height: 3px;
+
+  background: #1d477d;
+  border-radius: 3px 3px 0 0;
 }
 
 
 /* =========================================================
    MY EVENTS
-========================================================= */
+   ========================================================= */
 
 .club-my-events {
-  max-width: 1100px;
+  max-width: 1180px;
   margin: 0 auto;
-
-  padding: 34px 24px 70px;
 }
 
 .club-my-events-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  margin-bottom: 18px;
 }
 
 .club-my-events-header h2 {
-  margin: 4px 0 0;
+  margin: 0;
 
-  font-size: 28px;
-  color: #10284d;
+  font-size: 30px;
+  color: #102a56;
 }
 
 
 /* =========================================================
-   EVENT LINK BUTTONS
-========================================================= */
+   EVENT FILTER / ACTION BUTTONS
+   ========================================================= */
 
 .club-event-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 
-  margin-top: 20px;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .club-event-link {
-  appearance: none;
+  min-height: 44px;
 
-  border: 1px solid #d4ddea;
-  border-radius: 9px;
+  padding: 0 20px;
 
-  background: white;
+  border: 1px solid #cad8e8;
+  border-radius: 10px;
 
-  padding: 11px 18px;
-
-  color: #1b416f;
+  background: #ffffff;
+  color: #173e70;
 
   font-size: 14px;
   font-weight: 700;
@@ -205,56 +325,52 @@
   cursor: pointer;
 
   transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .club-event-link:hover {
+  background: #f2f6fb;
+  border-color: #9eb4d0;
   transform: translateY(-1px);
-  border-color: #9eb1cd;
 }
 
 .club-event-link.active {
-  background: #edf3fb;
-  border-color: #1b416f;
+  background: #eef4fb;
+  border-color: #1d477d;
+  color: #1d477d;
 }
 
 .club-event-link-primary {
-  background: #1b416f;
-  color: white;
-  border-color: #1b416f;
+  background: #1d477d;
+  border-color: #1d477d;
+  color: #ffffff;
 }
 
 .club-event-link-primary:hover {
-  background: #16365d;
+  background: #153962;
+  border-color: #153962;
 }
 
-
-/* =========================================================
-   CLEAR FILTER
-========================================================= */
-
 .club-clear-filter {
+  margin-bottom: 18px;
+
   border: 0;
   background: transparent;
 
-  padding: 0;
+  color: #315f96;
 
-  color: #56759d;
-
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
 
   cursor: pointer;
-
-  margin-bottom: 18px;
 }
 
 
 /* =========================================================
    EVENT LIST
-========================================================= */
+   ========================================================= */
 
 .club-event-list {
   display: flex;
@@ -263,46 +379,67 @@
 }
 
 .club-event-row {
-  background: white;
-
-  border: 1px solid #e0e5ed;
-  border-radius: 14px;
-
-  padding: 20px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  gap: 24px;
+  gap: 25px;
 
-  box-shadow: 0 4px 14px rgba(20, 40, 70, 0.04);
+  padding: 22px 24px;
+
+  background: #ffffff;
+
+  border: 1px solid #dce5f0;
+  border-radius: 16px;
+
+  box-shadow: 0 7px 22px rgba(16, 42, 86, 0.045);
 }
 
 .club-event-row-main {
   min-width: 0;
-  flex: 1;
 }
 
-.club-event-row-main h3 {
-  margin: 8px 0 10px;
+.club-event-status {
+  display: inline-flex;
 
-  font-size: 19px;
-  color: #10284d;
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.club-event-status.approved {
+  background: #e8f7ed;
+  color: #15703a;
+}
+
+.club-event-status.waiting {
+  background: #fff6df;
+  color: #956800;
+}
+
+.club-event-status.rejected {
+  background: #fdecec;
+  color: #a52b2b;
+}
+
+.club-event-row h3 {
+  margin: 9px 0 8px;
+
+  font-size: 20px;
+  color: #102a56;
 }
 
 .club-event-row-details {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 18px;
+  gap: 16px;
 
-  color: #71809a;
-
+  color: #70829b;
   font-size: 13px;
-}
-
-.club-event-row-details span {
-  position: relative;
 }
 
 .club-event-row-actions {
@@ -313,27 +450,925 @@
   flex-shrink: 0;
 }
 
+.club-empty-card {
+  padding: 55px 30px;
+
+  text-align: center;
+
+  background: #ffffff;
+
+  border: 1px solid #dce5f0;
+  border-radius: 18px;
+}
+
+.club-empty-card h3 {
+  margin: 0 0 20px;
+
+  color: #102a56;
+  font-size: 19px;
+}
+
 
 /* =========================================================
-   MOBILE
-========================================================= */
+   REQUEST MODAL
+   ========================================================= */
 
-@media (max-width: 700px) {
+.club-request-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(9, 26, 49, 0.55);
+
+  overflow-y: auto;
+}
+
+.club-request-modal {
+  width: min(720px, 100%);
+
+  max-height: calc(100vh - 48px);
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border-radius: 20px;
+
+  border: 1px solid #dbe4ef;
+
+  box-shadow: 0 25px 70px rgba(8, 29, 56, 0.25);
+
+  padding: 28px;
+}
+
+.club-request-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 24px;
+}
+
+.club-section-kicker {
+  margin: 0 0 6px;
+
+  color: #6c85a4;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.club-request-header h2 {
+  margin: 0;
+
+  color: #102a56;
+  font-size: 27px;
+}
+
+.club-request-close {
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid #d4dfec;
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #365473;
+
+  font-size: 24px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.club-request-close:hover {
+  background: #f1f5f9;
+}
+
+
+/* =========================================================
+   REQUEST DETAILS
+   ========================================================= */
+
+.club-request-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+.club-request-details > div {
+  padding: 15px;
+
+  border: 1px solid #e0e7f0;
+  border-radius: 11px;
+
+  background: #f8fafc;
+}
+
+.club-request-details span,
+.club-request-description span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #70829b;
+
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.club-request-details strong {
+  color: #102a56;
+}
+
+.club-request-description {
+  padding: 16px;
+
+  border-radius: 12px;
+  background: #f7f9fc;
+
+  margin-bottom: 15px;
+}
+
+.club-request-description p {
+  margin: 0;
+
+  color: #334b69;
+  line-height: 1.6;
+}
+
+.club-request-note {
+  margin-top: 15px;
+  padding: 16px;
+
+  border-left: 4px solid #1d477d;
+
+  background: #eef4fb;
+
+  color: #294667;
+
+  line-height: 1.55;
+}
+
+.club-request-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+
+/* =========================================================
+   REQUEST FORM
+   ========================================================= */
+
+.club-request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.club-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.club-form-field label {
+  color: #263f5f;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.club-form-field input,
+.club-form-field select,
+.club-form-field textarea {
+  width: 100%;
+
+  padding: 12px 13px;
+
+  border: 1px solid #cbd8e8;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #102a56;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+}
+
+.club-form-field input:focus,
+.club-form-field select:focus,
+.club-form-field textarea:focus {
+  border-color: #5279a8;
+
+  box-shadow: 0 0 0 3px rgba(82, 121, 168, 0.1);
+}
+
+.club-form-field textarea {
+  resize: vertical;
+}
+
+.club-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.form-message {
+  padding: 12px 14px;
+
+  border-radius: 9px;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-error {
+  background: #fff0f0;
+  color: #a52b2b;
+  border: 1px solid #f0caca;
+}
+
+.form-success {
+  background: #edf9f0;
+  color: #18703b;
+  border: 1px solid #c9e8d2;
+}
+
+
+/* =========================================================
+   APPROVAL MODAL
+   ========================================================= */
+
+.club-approval-modal {
+  width: min(1120px, 100%);
+
+  max-height: calc(100vh - 30px);
+
+  overflow-y: auto;
+
+  background: #eef3f8;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 30px 90px rgba(5, 23, 47, 0.35);
+}
+
+
+/* =========================================================
+   APPROVAL TOOLBAR
+   ========================================================= */
+
+.club-approval-toolbar {
+  position: sticky;
+  top: 0;
+
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 18px;
+
+  background: #102a56;
+
+  color: #ffffff;
+}
+
+.club-approval-toolbar h2 {
+  margin: 0;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.club-approval-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.club-approval-toolbar .secondary-button {
+  background: #ffffff;
+  color: #173e70;
+}
+
+
+/* =========================================================
+   APPROVAL DOCUMENT
+   ========================================================= */
+
+.club-approval-document {
+  position: relative;
+
+  width: 100%;
+
+  padding: 32px;
+
+  background: #ffffff;
+
+  overflow: hidden;
+}
+
+.club-approval-document-content {
+  position: relative;
+  z-index: 2;
+}
+
+
+/* =========================================================
+   APPROVAL HEADER
+   ========================================================= */
+
+.club-approval-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 35px;
+
+  padding-bottom: 20px;
+
+  border-bottom: 2px solid #1d477d;
+}
+
+.club-approval-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+}
+
+.club-approval-brand-mark {
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #1d477d;
+
+  color: #1d477d;
+
+  font-size: 22px;
+  font-weight: 900;
+
+  letter-spacing: -0.04em;
+}
+
+.club-approval-brand h1 {
+  margin: 0;
+
+  color: #102a56;
+
+  font-size: 31px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.club-approval-brand p {
+  margin: 8px 0 0;
+
+  color: #5e7390;
+
+  font-size: 13px;
+}
+
+.club-approval-office {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  text-align: right;
+}
+
+.club-approval-office strong {
+  color: #102a56;
+
+  font-size: 15px;
+}
+
+.club-approval-office span {
+  margin-top: 4px;
+
+  color: #47617f;
+
+  font-size: 13px;
+}
+
+.club-approval-office small {
+  margin-top: 4px;
+
+  color: #7b8da5;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   APPROVED STATUS
+   ========================================================= */
+
+.club-approval-status {
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+
+  margin-top: 22px;
+  padding: 20px 24px;
+
+  background: #eef9f0;
+
+  border: 1px solid #c8e7cf;
+  border-radius: 12px;
+}
+
+.club-approval-check {
+  width: 64px;
+  height: 64px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #159447;
+  color: #ffffff;
+
+  font-size: 37px;
+  font-weight: 800;
+}
+
+.club-approval-status p {
+  margin: 0 0 3px;
+
+  color: #4f7a5b;
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.club-approval-status h2 {
+  margin: 0 0 5px;
+
+  color: #0d4c23;
+
+  font-size: 28px;
+}
+
+.club-approval-status span {
+  color: #486a52;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   APPROVAL INFORMATION GRID
+   ========================================================= */
+
+.club-approval-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+
+  margin-top: 22px;
+}
+
+.club-approval-panel {
+  border: 1px solid #dce5f0;
+  border-radius: 12px;
+
+  background: #fbfdff;
+
+  overflow: hidden;
+}
+
+.club-approval-panel-title {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 14px 16px;
+
+  border-bottom: 1px solid #dce5f0;
+
+  background: #f4f7fb;
+}
+
+.club-approval-panel-title span {
+  color: #1d477d;
+
+  font-size: 18px;
+}
+
+.club-approval-panel-title h3 {
+  margin: 0;
+
+  color: #173e70;
+
+  font-size: 15px;
+}
+
+.club-approval-row {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  padding: 13px 16px;
+
+  border-bottom: 1px solid #e8edf3;
+}
+
+.club-approval-row:last-child {
+  border-bottom: 0;
+}
+
+.club-approval-row span {
+  color: #71839b;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.club-approval-row strong {
+  color: #102a56;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   ACKNOWLEDGEMENT
+   ========================================================= */
+
+.club-approval-acknowledgement {
+  margin-top: 20px;
+
+  border: 1px solid #d8e3f1;
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  background: #f8fbff;
+}
+
+.club-approval-acknowledgement .club-approval-panel-title {
+  background: #f0f5fb;
+}
+
+.club-approval-acknowledgement-body {
+  display: flex;
+
+  gap: 10px;
+
+  margin: 15px;
+
+  padding: 18px 20px;
+
+  border-radius: 8px;
+
+  background: #edf3fa;
+}
+
+.club-approval-acknowledgement-body > span {
+  color: #6681a3;
+
+  font-family: Georgia, serif;
+
+  font-size: 34px;
+  line-height: 0.7;
+}
+
+.club-approval-acknowledgement-body p {
+  margin: 0;
+
+  color: #3e5877;
+
+  font-size: 14px;
+
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   EVENT TITLE + OFFICIAL STAMP OVERLAY
+   ========================================================= */
+
+.club-approval-title-wrap {
+  position: relative;
+  display: inline-block;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.club-approval-event-title {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+}
+
+.club-approval-title-stamp {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 104px;
+  height: 104px;
+  object-fit: contain;
+  opacity: 0.20;
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  transform: translate(-50%, -50%) rotate(-8deg);
+}
+
+/* =========================================================
+   SECURE VERIFICATION QR
+   ========================================================= */
+
+.club-approval-verification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 24px;
+  padding: 18px 20px;
+  border: 1px solid #d7e1ec;
+  border-radius: 12px;
+  background: #f7fafc;
+}
+
+.club-approval-verification-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.club-approval-verification-copy > span {
+  color: #315f96;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+}
+
+.club-approval-verification-copy > strong {
+  color: #102a56;
+  font-size: 14px;
+}
+
+.club-approval-verification-copy > p {
+  max-width: 560px;
+  margin: 0;
+  color: #657a95;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.club-approval-qr {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 7px;
+  border: 1px solid #dbe4ed;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.club-approval-qr svg {
+  display: block;
+}
+
+.club-approval-qr small {
+  color: #536b87;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   AUTHORITY / SIGNATURE / STAMP
+   ========================================================= */
+
+.club-approval-authority {
+  display: grid;
+
+  grid-template-columns: 1.15fr 1fr 0.75fr;
+
+  align-items: center;
+
+  gap: 25px;
+
+  margin-top: 28px;
+
+  padding: 22px 10px;
+
+  border-bottom: 1px solid #9fb3cb;
+}
+
+.club-approval-authority-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.club-approval-authority-text span {
+  color: #6e829b;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.club-approval-authority-text strong {
+  margin-top: 5px;
+
+  color: #102a56;
+
+  font-size: 15px;
+}
+
+.club-approval-authority-text small {
+  margin-top: 3px;
+
+  color: #5e7390;
+
+  font-size: 12px;
+}
+
+
+/* DIGITAL SIGNATURE */
+
+.club-approval-signature {
+  min-height: 105px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  padding: 5px 20px;
+
+  border-left: 1px solid #ccd7e5;
+}
+
+.club-approval-signature img {
+  display: block;
+
+  width: min(220px, 100%);
+  height: 65px;
+
+  object-fit: contain;
+}
+
+.club-approval-signature span {
+  margin-top: 5px;
+
+  color: #637893;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 0.07em;
+}
+
+.club-approval-signature-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 220px;
+  height: 65px;
+
+  color: #8ba0b9;
+
+  font-size: 11px;
+
+  border-bottom: 1px solid #8da2bc;
+}
+
+
+/* =========================================================
+   APPROVAL FOOTER
+   ========================================================= */
+
+.club-approval-footer {
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding-top: 15px;
+
+  color: #657a95;
+
+  font-size: 10px;
+}
+
+.club-approval-footer > div:first-child {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.club-approval-footer span {
+  color: #7c8ea5;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.club-approval-footer strong {
+  color: #425a76;
+
+  font-size: 11px;
+}
+
+.club-approval-footer > div:last-child {
+  text-align: right;
+}
+
+
+/* =========================================================
+   APPROVAL LOADING / ERROR
+   ========================================================= */
+
+.club-approval-loading,
+.club-approval-error {
+  margin: 0;
+
+  padding: 12px 18px;
+
+  font-size: 13px;
+}
+
+.club-approval-loading {
+  background: #eef4fb;
+  color: #315f96;
+}
+
+.club-approval-error {
+  background: #fff0f0;
+  color: #a52b2b;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+
+  .club-dashboard-page {
+    padding: 24px 18px;
+  }
 
   .club-profile-header {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .club-profile-avatar {
-    width: 68px;
-    height: 68px;
-
-    font-size: 26px;
-  }
-
-  .club-profile-name h1 {
-    font-size: 24px;
   }
 
   .club-profile-selector {
@@ -341,29 +1376,7 @@
   }
 
   .club-profile-selector select {
-    width: 100%;
-  }
-
-  .club-profile-stats {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  .club-stat strong {
-    font-size: 22px;
-  }
-
-  .club-stat span {
-    font-size: 9px;
-  }
-
-  .club-event-links {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .club-event-link {
-    width: 100%;
+    flex: 1;
   }
 
   .club-event-row {
@@ -375,10 +1388,765 @@
     width: 100%;
   }
 
-  .club-event-row-actions button,
-  .club-event-row-actions a {
-    flex: 1;
-    text-align: center;
+  .club-approval-grid {
+    grid-template-columns: 1fr;
   }
 
+  .club-approval-authority {
+    grid-template-columns: 1fr;
+  }
+
+  .club-approval-verification {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .club-approval-signature {
+    border-left: 0;
+    border-top: 1px solid #ccd7e5;
+
+    padding-top: 20px;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+
+  .club-dashboard-page {
+    padding: 16px 12px;
+  }
+
+  .club-profile-header {
+    padding: 18px;
+  }
+
+  .club-profile-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .club-stat {
+    min-height: 80px;
+  }
+
+  .club-stat strong {
+    font-size: 23px;
+  }
+
+  .club-stat span {
+    font-size: 9px;
+  }
+
+  .club-my-events-header h2 {
+    font-size: 25px;
+  }
+
+  .club-event-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .club-event-link {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .club-request-overlay {
+    padding: 10px;
+  }
+
+  .club-request-modal {
+    padding: 20px;
+    max-height: calc(100vh - 20px);
+  }
+
+  .club-request-details {
+    grid-template-columns: 1fr;
+  }
+
+  .club-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .club-approval-modal {
+    max-height: calc(100vh - 10px);
+    border-radius: 10px;
+  }
+
+  .club-approval-document {
+    padding: 18px;
+  }
+
+  .club-approval-header {
+    flex-direction: column;
+  }
+
+  .club-approval-office {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .club-approval-brand h1 {
+    font-size: 24px;
+  }
+
+  .club-approval-status {
+    align-items: flex-start;
+  }
+
+  .club-approval-status h2 {
+    font-size: 23px;
+  }
+
+  .club-approval-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .club-approval-footer > div:last-child {
+    text-align: left;
+  }
+}
+
+
+/* =========================================================
+   PRINT PREPARATION
+   ========================================================= */
+
+
+
+/* =========================================================
+   APPROVAL QR FALLBACK
+   ========================================================= */
+
+.club-approval-qr-unavailable {
+  min-width: 132px;
+  min-height: 132px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1px dashed #b9c7d8;
+  border-radius: 10px;
+  background: #f8fafc;
+  text-align: center;
+}
+
+
+.club-approval-verification-code-label {
+  display: block;
+  margin-top: 8px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-align: center;
+  color: #5d6f86;
+}
+
+.club-approval-verification-code {
+  display: block;
+  margin-top: 3px;
+  font-size: 13px;
+  line-height: 1.15;
+  letter-spacing: .12em;
+  font-weight: 900;
+  text-align: center;
+  color: #102a56;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   FINAL PRINT — EXACT APPROVAL DESIGN / A4 ONE PAGE
+   ========================================================= */
+
+/* =========================================================
+   APPROVAL CERTIFICATE — FINAL A4 PRINT
+   Same visual design, fitted to ONE A4 sheet
+   ========================================================= */
+
+
+
+
+/* =========================================================
+   PRINT ONLY THE OPEN APPROVAL — NATIVE A4 PRINT
+   ========================================================= */
+
+
+
+@media screen {
+  .club-approval-toolbar {
+    min-height: 68px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .club-approval-toolbar .secondary-button,
+  .club-approval-toolbar button {
+    min-height: 44px;
+    padding: 10px 20px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .club-approval-toolbar .secondary-button:hover,
+  .club-approval-toolbar button:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* =========================================================
+   FINAL APPROVAL PDF — ONE A4 PAGE
+   ========================================================= */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+
+  html,
+  body,
+  #root {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    background: #fff !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide everything except the open approval certificate. */
+  body * {
+    visibility: hidden !important;
+  }
+
+  .club-approval-overlay,
+  .club-approval-overlay * {
+    visibility: visible !important;
+  }
+
+  .club-approval-overlay {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    background: #fff !important;
+    overflow: visible !important;
+  }
+
+  .club-approval-modal {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .club-approval-toolbar {
+    display: none !important;
+  }
+
+  /*
+   * Exact A4 printable width:
+   * page width 210mm - 16mm page margins = 194mm.
+   * Certificate uses 190mm, leaving a safe 2mm edge on both sides.
+   */
+  .club-approval-document {
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 190mm !important;
+    max-width: 190mm !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 6mm !important;
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .club-approval-document-content {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  /* Keep the exact desktop two-column structure. */
+  .club-approval-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin-top: 12px !important;
+  }
+
+  /* Compact the vertical rhythm; typography remains real vector text. */
+  .club-approval-header {
+    gap: 22px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .club-approval-brand h1 {
+    font-size: 25px !important;
+  }
+
+  .club-approval-status {
+    gap: 14px !important;
+    margin-top: 12px !important;
+    padding: 12px 16px !important;
+  }
+
+  .club-approval-check {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    font-size: 26px !important;
+  }
+
+  .club-approval-status h2 {
+    font-size: 22px !important;
+  }
+
+  .club-approval-status p {
+    font-size: 7px !important;
+  }
+
+  .club-approval-status span {
+    font-size: 9px !important;
+  }
+
+  .club-approval-panel-title {
+    padding: 8px 11px !important;
+    gap: 6px !important;
+  }
+
+  .club-approval-panel-title span {
+    font-size: 13px !important;
+  }
+
+  .club-approval-panel-title h3 {
+    font-size: 11px !important;
+  }
+
+  .club-approval-row {
+    gap: 2px !important;
+    padding: 7px 11px !important;
+  }
+
+  .club-approval-row span {
+    font-size: 7px !important;
+  }
+
+  .club-approval-row strong {
+    font-size: 10px !important;
+  }
+
+  .club-approval-acknowledgement {
+    margin-top: 10px !important;
+  }
+
+  .club-approval-acknowledgement-body {
+    gap: 7px !important;
+    margin: 9px !important;
+    padding: 10px 12px !important;
+  }
+
+  .club-approval-acknowledgement-body > span {
+    font-size: 24px !important;
+  }
+
+  .club-approval-acknowledgement-body p {
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+  }
+
+  .club-approval-authority {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+    margin-top: 12px !important;
+    padding: 10px 6px !important;
+  }
+
+  .club-approval-signature {
+    min-height: 72px !important;
+    padding: 3px 12px !important;
+  }
+
+  .club-approval-signature img,
+  .club-approval-signature-placeholder {
+    width: 170px !important;
+    height: 48px !important;
+  }
+
+  .club-approval-signature span {
+    margin-top: 3px !important;
+    font-size: 7px !important;
+  }
+
+  .club-approval-verification {
+    gap: 14px !important;
+    margin-top: 10px !important;
+    padding: 10px 12px !important;
+  }
+
+  .club-approval-verification-copy {
+    gap: 3px !important;
+  }
+
+  .club-approval-verification-copy > span {
+    font-size: 7px !important;
+  }
+
+  .club-approval-verification-copy > strong {
+    font-size: 10px !important;
+  }
+
+  .club-approval-verification-copy > p {
+    font-size: 8px !important;
+    line-height: 1.35 !important;
+  }
+
+  /* QR is a real image; it stays sharp in the PDF. */
+  .club-approval-qr {
+    padding: 5px !important;
+    gap: 3px !important;
+  }
+
+  .club-approval-qr img {
+    width: 32mm !important;
+    height: 32mm !important;
+    max-width: none !important;
+    max-height: none !important;
+    display: block !important;
+  }
+
+  .club-approval-qr small {
+    font-size: 6px !important;
+  }
+
+  .club-approval-verification-code-label {
+    margin-top: 1px !important;
+    font-size: 6px !important;
+  }
+
+  .club-approval-verification-code {
+    margin-top: 1px !important;
+    font-size: 9px !important;
+    letter-spacing: .07em !important;
+  }
+
+  .club-approval-footer {
+    gap: 10px !important;
+    padding-top: 7px !important;
+    font-size: 7px !important;
+  }
+
+  .club-approval-footer span {
+    font-size: 6px !important;
+  }
+
+  .club-approval-footer strong {
+    font-size: 8px !important;
+  }
+
+  .club-approval-title-stamp {
+    max-width: 62px !important;
+    max-height: 62px !important;
+  }
+
+  .club-approval-header,
+  .club-approval-status,
+  .club-approval-grid,
+  .club-approval-panel,
+  .club-approval-acknowledgement,
+  .club-approval-authority,
+  .club-approval-verification,
+  .club-approval-footer {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
+
+/* =========================================================
+   APPROVAL TOOLBAR — SCREEN
+   ========================================================= */
+
+@media screen {
+  .club-approval-toolbar {
+    min-height: 68px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .club-approval-toolbar .secondary-button,
+  .club-approval-toolbar button {
+    min-height: 44px;
+    padding: 10px 20px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+}
+
+
+/* =========================================================
+   FINAL VENUE VERIFICATION
+   QR + CODE ARE INDEPENDENT RENDER BLOCKS
+   ========================================================= */
+
+.club-approval-verification {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 18px 20px;
+  border: 1px solid #d7e1ec;
+  border-radius: 12px;
+  background: #f7fafc;
+}
+
+.club-approval-verification-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.club-approval-verification-heading > span {
+  color: #315f96;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+}
+
+.club-approval-verification-heading > strong {
+  color: #102a56;
+  font-size: 14px;
+}
+
+.club-approval-verification-heading > p {
+  max-width: 760px;
+  margin: 0;
+  color: #657a95;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.club-approval-verification-options {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 12px;
+}
+
+.club-approval-qr-card,
+.club-approval-code-card {
+  min-height: 178px;
+  box-sizing: border-box;
+  border: 1px solid #dbe4ed;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.club-approval-qr-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+}
+
+.club-approval-qr-card img {
+  width: 145px;
+  height: 145px;
+  object-fit: contain;
+  display: block;
+}
+
+.club-approval-qr-card small {
+  color: #536b87;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.club-approval-qr-card > span {
+  color: #7a8da5;
+  font-size: 8px;
+}
+
+.club-approval-qr-placeholder {
+  width: 145px;
+  height: 145px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #c6d4e4;
+  color: #7a8da5;
+  font-size: 11px;
+}
+
+.club-approval-verification-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  color: #315f96;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.club-approval-code-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 18px;
+  text-align: center;
+}
+
+.club-approval-code-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e9f1fb;
+  color: #1d477d;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.club-approval-code-card > span {
+  color: #315f96;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+}
+
+.club-approval-code-card .club-approval-verification-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 360px);
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 9px 14px;
+  border: 1px dashed #b9cce2;
+  border-radius: 8px;
+  color: #102a56;
+  background: #fbfdff;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  word-break: break-word;
+}
+
+.club-approval-code-card > p {
+  margin: 0;
+  color: #657a95;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+/* Keep the mobile layout usable. */
+@media (max-width: 760px) {
+  .club-approval-verification-options {
+    grid-template-columns: 1fr;
+  }
+
+  .club-approval-verification-divider {
+    min-height: 28px;
+  }
+}
+
+/* Print: preserve the two independent verification blocks. */
+@media print {
+  .club-approval-verification {
+    gap: 9px !important;
+    padding: 10px 12px !important;
+  }
+
+  .club-approval-verification-options {
+    grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .club-approval-qr-card,
+  .club-approval-code-card {
+    min-height: 112px !important;
+  }
+
+  .club-approval-qr-card {
+    padding: 6px !important;
+  }
+
+  .club-approval-qr-card img,
+  .club-approval-qr-placeholder {
+    width: 78px !important;
+    height: 78px !important;
+  }
+
+  .club-approval-qr-card small,
+  .club-approval-qr-card > span {
+    font-size: 6px !important;
+  }
+
+  .club-approval-code-card {
+    gap: 5px !important;
+    padding: 8px !important;
+  }
+
+  .club-approval-code-icon {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+  }
+
+  .club-approval-code-card > span {
+    font-size: 6px !important;
+  }
+
+  .club-approval-code-card .club-approval-verification-code {
+    min-height: 30px !important;
+    padding: 5px 8px !important;
+    font-size: 9px !important;
+    letter-spacing: .06em !important;
+  }
+
+  .club-approval-code-card > p {
+    font-size: 6px !important;
+  }
 }
