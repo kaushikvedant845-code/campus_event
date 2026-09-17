@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { supabase } from "../lib/supabase"
 
 import StudentDashboard from "./student/StudentDashboard"
+import FacultyDashboard from "./faculty/FacultyDashboard"
 import ClubHeadDashboard from "./club_head/ClubHeadDashboard"
 
 function DashboardRouter() {
@@ -11,6 +12,7 @@ function DashboardRouter() {
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState(null)
   const [clubHeads, setClubHeads] = useState([])
+  const [accessError, setAccessError] = useState("")
 
   useEffect(() => {
     let mounted = true
@@ -18,6 +20,7 @@ function DashboardRouter() {
     const loadDashboardIdentity = async () => {
       try {
         setLoading(true)
+        setAccessError("")
 
         // -----------------------------------------
         // AUTH USER
@@ -28,19 +31,15 @@ function DashboardRouter() {
           error: authError,
         } = await supabase.auth.getUser()
 
-        if (authError) {
-          throw authError
-        }
+        if (authError) throw authError
 
         if (!user) {
-          navigate("/login", {
-            replace: true,
-          })
+          navigate("/login", { replace: true })
           return
         }
 
         // -----------------------------------------
-        // COMMON PROFILE
+        // BASE PROFILE
         // -----------------------------------------
 
         const {
@@ -48,37 +47,48 @@ function DashboardRouter() {
           error: profileError,
         } = await supabase
           .from("profiles")
-          .select(
-            "id, email, full_name, avatar_url, role"
-          )
+          .select("id, email, full_name, avatar_url, role, account_status")
           .eq("id", user.id)
           .maybeSingle()
 
-        if (profileError) {
-          throw profileError
-        }
+        if (profileError) throw profileError
 
         if (!baseProfile) {
-          throw new Error(
-            "Profile not found for authenticated user."
+          throw new Error("Profile not found for authenticated user.")
+        }
+
+        // -----------------------------------------
+        // FACULTY AUTHORIZATION
+        //
+        // Do NOT trust profiles.role for faculty access.
+        // Faculty status is determined server-side by
+        // is_authorized_faculty(), which checks the
+        // active faculty record + Google identity.
+        // -----------------------------------------
+
+        const {
+          data: facultyAccess,
+          error: facultyAccessError,
+        } = await supabase.rpc("is_active_faculty")
+
+        if (facultyAccessError) {
+          console.error(
+            "Faculty authorization check failed:",
+            facultyAccessError
           )
         }
 
-        // -----------------------------------------
-        // FACULTY
-        // -----------------------------------------
+        if (facultyAccess === true) {
+          if (!mounted) return
 
-        if (baseProfile.role === "faculty") {
+          setProfile({
+            ...baseProfile,
+            email: baseProfile.email || user.email || "",
+            role: "faculty",
+          })
 
-          if (mounted) {
-            setProfile(baseProfile)
-            setLoading(false)
-          }
-
-          /*
-           * Faculty/Admin platform will be designed separately.
-           * Do not build that frontend here.
-           */
+          setClubHeads([])
+          setLoading(false)
           return
         }
 
@@ -97,9 +107,7 @@ function DashboardRouter() {
           .eq("profile_id", user.id)
           .maybeSingle()
 
-        if (studentError) {
-          throw studentError
-        }
+        if (studentError) throw studentError
 
         // -----------------------------------------
         // CLUB MEMBERSHIPS
@@ -123,12 +131,10 @@ function DashboardRouter() {
           .eq("profile_id", user.id)
           .eq("membership_status", "active")
 
-        if (membershipError) {
-          throw membershipError
-        }
+        if (membershipError) throw membershipError
 
         // -----------------------------------------
-        // FIND CLUB HEAD MEMBERSHIPS
+        // ACTIVE CLUB HEAD MEMBERSHIPS
         // -----------------------------------------
 
         const activeHeadClubs = (memberships || [])
@@ -141,48 +147,35 @@ function DashboardRouter() {
             membership_id: membership.id,
             club_id: membership.club_id,
             club_name: membership.clubs.name,
-            membership_role:
-              membership.membership_role,
-            membership_status:
-              membership.membership_status,
+            membership_role: membership.membership_role,
+            membership_status: membership.membership_status,
           }))
 
         if (!mounted) return
 
         // -----------------------------------------
-        // FINAL PROFILE
+        // FINAL STUDENT PROFILE
         // -----------------------------------------
 
         setProfile({
           ...baseProfile,
-
-          email:
-            baseProfile.email ||
-            user.email ||
-            "",
-
-          student_profile:
-            studentProfile || null,
-
-          memberships:
-            memberships || [],
+          email: baseProfile.email || user.email || "",
+          student_profile: studentProfile || null,
+          memberships: memberships || [],
         })
 
         setClubHeads(activeHeadClubs)
-
         setLoading(false)
-
       } catch (error) {
-
-        console.error(
-          "Dashboard identity error:",
-          error
-        )
+        console.error("Dashboard identity error:", error)
 
         if (!mounted) return
 
         setProfile(null)
         setClubHeads([])
+        setAccessError(
+          error?.message || "We could not load your account information."
+        )
         setLoading(false)
       }
     }
@@ -201,17 +194,31 @@ function DashboardRouter() {
   if (loading) {
     return (
       <main className="dashboard-page">
-
         <div className="loading-card">
-
           <div className="loading-spinner" />
+          <p>Loading your dashboard...</p>
+        </div>
+      </main>
+    )
+  }
+
+  // -----------------------------------------
+  // PROFILE / ACCESS ERROR
+  // -----------------------------------------
+
+  if (!profile) {
+    return (
+      <main className="dashboard-page">
+        <section className="dashboard-empty-state">
+          <p className="dashboard-section-kicker">ACCOUNT</p>
+
+          <h1>Profile unavailable</h1>
 
           <p>
-            Loading your dashboard...
+            {accessError ||
+              "We could not load your account information."}
           </p>
-
-        </div>
-
+        </section>
       </main>
     )
   }
@@ -220,58 +227,8 @@ function DashboardRouter() {
   // FACULTY
   // -----------------------------------------
 
-  if (profile?.role === "faculty") {
-    return (
-      <main className="dashboard-page">
-
-        <section className="dashboard-empty-state">
-
-          <p className="dashboard-section-kicker">
-            FACULTY PLATFORM
-          </p>
-
-          <h1>
-            Faculty Dashboard
-          </h1>
-
-          <p>
-            The faculty and administrator platform
-            will be handled separately.
-          </p>
-
-        </section>
-
-      </main>
-    )
-  }
-
-  // -----------------------------------------
-  // PROFILE NOT FOUND
-  // -----------------------------------------
-
-  if (!profile) {
-    return (
-      <main className="dashboard-page">
-
-        <section className="dashboard-empty-state">
-
-          <p className="dashboard-section-kicker">
-            ACCOUNT
-          </p>
-
-          <h1>
-            Profile unavailable
-          </h1>
-
-          <p>
-            We could not load your account
-            information.
-          </p>
-
-        </section>
-
-      </main>
-    )
+  if (profile.role === "faculty") {
+    return <FacultyDashboard profile={profile} />
   }
 
   // -----------------------------------------
@@ -279,25 +236,19 @@ function DashboardRouter() {
   // -----------------------------------------
 
   if (clubHeads.length > 0) {
-
     return (
       <ClubHeadDashboard
         profile={profile}
         headClubs={clubHeads}
       />
     )
-
   }
 
   // -----------------------------------------
   // NORMAL STUDENT
   // -----------------------------------------
 
-  return (
-    <StudentDashboard
-      profile={profile}
-    />
-  )
+  return <StudentDashboard profile={profile} />
 }
 
 export default DashboardRouter

@@ -1,23 +1,42 @@
-import { Link } from "react-router-dom"
+import React from "react";
+import { Link } from "react-router-dom";
 
-function RegistrationSuccess() {
+const RegistrationSuccess = () => {
   return (
-    <main>
-      <h1>Registration Successful</h1>
+    <main className="registration-success-page">
+      <section className="registration-success-card">
 
-      <p>You have successfully registered for the event.</p>
+        <p className="page-kicker">
+          CAMPUS EVENT
+        </p>
 
-      <Link to="/dashboard">
-        View My Registered Events
-      </Link>
+        <h1>Registration Successful !</h1>
 
-      <br />
 
-      <Link to="/events">
-        Browse More Events
-      </Link>
+        <p className="registration-success-description">
+          You have successfully registered for the event.
+          Your registration has been recorded successfully.
+        </p>
+
+        <div className="registration-success-actions">
+          <Link
+            to="/dashboard"
+            className="ui-primary-button"
+          >
+            View My Registered Events
+          </Link>
+
+          <Link
+            to="/events"
+            className="ui-secondary-button"
+          >
+            Browse More Events
+          </Link>
+        </div>
+
+      </section>
     </main>
-  )
-}
+  );
+};
 
-export default RegistrationSuccess
+export default RegistrationSuccess;

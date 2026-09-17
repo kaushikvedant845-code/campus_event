@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { supabase } from "../../lib/supabase"
 
+
 function Events() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
@@ -27,9 +28,11 @@ function Events() {
             assigned_venue,
             status,
             approval_status,
+            head_decision,
             is_public,
             visibility,
             publication_mode,
+            registration_access,
             member_early_access,
             clubs (
               id,
@@ -37,8 +40,7 @@ function Events() {
             )
           `)
           .eq("approval_status", "APPROVED")
-          .eq("is_public", true)
-          .eq("visibility", "public")
+          .eq("head_decision", "PUBLISHED")
           .order("event_date", {
             ascending: true,
           })
@@ -85,6 +87,7 @@ function Events() {
     const [hours, minutes] = time.split(":")
 
     const date = new Date()
+
     date.setHours(
       Number(hours),
       Number(minutes),
@@ -108,6 +111,25 @@ function Events() {
       event.requested_venue ||
       "Venue to be announced"
     )
+  }
+
+  const getVisibilityLabel = (event) => {
+    if (event.visibility === "private") {
+      return "Members Only"
+    }
+
+    return "Public"
+  }
+
+  const getRegistrationLabel = (event) => {
+    if (
+      event.publication_mode ===
+      "DETAILS_AND_REGISTRATION"
+    ) {
+      return "Registration Open"
+    }
+
+    return "Registration Closed"
   }
 
   if (loading) {
@@ -172,7 +194,9 @@ function Events() {
             <button
               type="button"
               className="primary-button"
-              onClick={() => window.location.reload()}
+              onClick={() =>
+                window.location.reload()
+              }
             >
               Try Again
             </button>
@@ -298,6 +322,32 @@ function Events() {
                   </div>
                 )}
 
+                {/* EVENT ACCESS / REGISTRATION STATUS */}
+                <div className="event-status-row">
+
+                  <span
+                    className={`event-visibility-badge ${
+                      event.visibility === "private"
+                        ? "members-only"
+                        : "public"
+                    }`}
+                  >
+                    {getVisibilityLabel(event)}
+                  </span>
+
+                  <span
+                    className={`event-registration-badge ${
+                      event.publication_mode ===
+                      "DETAILS_AND_REGISTRATION"
+                        ? "registration-open"
+                        : "registration-closed"
+                    }`}
+                  >
+                    {getRegistrationLabel(event)}
+                  </span>
+
+                </div>
+
                 <Link
                   to={`/events/${event.id}`}
                   className="details-button"
@@ -318,6 +368,7 @@ function Events() {
 
       <div className="events-bottom-note">
         <span>●</span>
+
         <b>
           New events will appear here once published.
         </b>

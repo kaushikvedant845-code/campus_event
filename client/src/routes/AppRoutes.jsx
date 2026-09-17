@@ -25,6 +25,7 @@ import Profile from "../pages/student/Profile"
 import EventRegistration from "../pages/student/EventRegistration"
 import RegistrationReview from "../pages/student/RegistrationReview"
 import RegistrationSuccess from "../pages/student/RegistrationSuccess"
+import RegisteredEventDetails from "../pages/student/RegisteredEventDetails"
 
 // =========================================================
 // SETTINGS
@@ -79,6 +80,19 @@ function AppRoutes() {
         element={<Events />}
       />
 
+      {/* -----------------------------------------------------
+          PUBLIC EVENT DETAILS
+
+          IMPORTANT:
+          This page must remain accessible WITHOUT LOGIN.
+
+          /events/:id
+          → pages/common/EventDetails.jsx
+
+          Login is required only when the user chooses
+          to register for the event.
+      ----------------------------------------------------- */}
+
       <Route
         path="/events/:id"
         element={<EventDetails />}
@@ -100,7 +114,7 @@ function AppRoutes() {
 
       {/* =====================================================
           AUTHENTICATED USER ROUTES
-          
+
           ProtectedRoute:
           - checks Supabase session
           - redirects unauthenticated users to /login
@@ -110,6 +124,7 @@ function AppRoutes() {
 
         {/* ---------------------------------------------------
             DASHBOARD
+
             DashboardRouter decides:
             - Normal Student
             - Club Head
@@ -118,6 +133,30 @@ function AppRoutes() {
         <Route
           path="/dashboard"
           element={<DashboardRouter />}
+        />
+
+        {/* ---------------------------------------------------
+            REGISTERED EVENT DETAILS
+
+            IMPORTANT:
+            This is NOT the public event page.
+
+            Dashboard:
+              Registered Events
+                    ↓
+              View Details
+                    ↓
+              /dashboard/registered-events/:id
+                    ↓
+              RegisteredEventDetails.jsx
+
+            The student must already be logged in.
+            There is NO "Register for Event" action here.
+        --------------------------------------------------- */}
+
+        <Route
+          path="/dashboard/registered-events/:id"
+          element={<RegisteredEventDetails />}
         />
 
         {/* ---------------------------------------------------
@@ -155,6 +194,9 @@ function AppRoutes() {
 
         {/* ---------------------------------------------------
             EVENT REGISTRATION
+
+            Public event details are visible without login,
+            but actual registration requires authentication.
         --------------------------------------------------- */}
 
         <Route
@@ -203,12 +245,12 @@ function AppRoutes() {
 
       {/* =====================================================
           FACULTY PLATFORM
-          
+
           FacultyRoute checks:
           1. Supabase session
           2. Authorized faculty
           3. AAL2 / TOTP MFA
-          
+
           Only after all three checks does the dashboard render.
       ===================================================== */}
 
@@ -223,12 +265,11 @@ function AppRoutes() {
 
       {/* =====================================================
           CLUB HEAD PLATFORM
-          
+
           Club Head authorization is handled separately by
           DashboardRouter for /dashboard.
 
-          The dedicated /club-head route is intentionally
-          protected by the same membership-based logic later.
+          The dedicated /club-head route remains protected.
       ===================================================== */}
 
       <Route
